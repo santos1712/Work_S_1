@@ -2,6 +2,11 @@ const RAD = Math.PI / 180;
 const scrn = document.getElementById("canvas");
 const sctx = scrn.getContext("2d");
 scrn.tabIndex = 1;
+
+// تحديث حجم الـ canvas ليشغل كامل الشاشة
+scrn.width = window.innerWidth;
+scrn.height = window.innerHeight;
+
 scrn.addEventListener("click", () => {
   switch (state.curr) {
     case state.getReady:
@@ -44,6 +49,12 @@ scrn.onkeydown = function keyDown(e) {
     }
   }
 };
+
+// إضافة حدث تغيير حجم النافذة لتحديث أبعاد الـ canvas
+window.addEventListener("resize", () => {
+  scrn.width = window.innerWidth;
+  scrn.height = window.innerHeight;
+});
 
 let frames = 0;
 let dx = 2;
