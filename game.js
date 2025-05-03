@@ -3,7 +3,6 @@ const scrn = document.getElementById("canvas");
 const sctx = scrn.getContext("2d");
 scrn.tabIndex = 1;
 
-// تحديث حجم الـ canvas ليشغل كامل الشاشة
 scrn.width = window.innerWidth;
 scrn.height = window.innerHeight;
 
@@ -29,7 +28,6 @@ scrn.addEventListener("click", () => {
 
 scrn.onkeydown = function keyDown(e) {
   if (e.keyCode == 32 || e.keyCode == 87 || e.keyCode == 38) {
-    // Space Key or W key or arrow up
     switch (state.curr) {
       case state.getReady:
         state.curr = state.Play;
@@ -50,7 +48,6 @@ scrn.onkeydown = function keyDown(e) {
   }
 };
 
-// إضافة حدث تغيير حجم النافذة لتحديث أبعاد الـ canvas
 window.addEventListener("resize", () => {
   scrn.width = window.innerWidth;
   scrn.height = window.innerHeight;
@@ -166,9 +163,11 @@ const bird = {
         this.y += this.speed;
         this.setRotation();
         this.speed += this.gravity;
-        if (this.y + r >= gnd.y || this.collisioned()) {
-          state.curr = state.gameOver;
-        }
+
+        // إلغاء الخسارة عند الاصطدام بالأنابيب أو الأرض
+        // if (this.y + r >= gnd.y || this.collisioned()) {
+        //   state.curr = state.gameOver;
+        // }
 
         break;
       case state.gameOver:
@@ -339,7 +338,6 @@ function draw() {
   sctx.fillRect(0, 0, scrn.width, scrn.height);
   bg.draw();
   pipe.draw();
-
   bird.draw();
   gnd.draw();
   UI.draw();
