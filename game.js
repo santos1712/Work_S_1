@@ -26,7 +26,7 @@ scrn.addEventListener("click", () => {
   }
 });
 
-scrn.onkeydown = function keyDown(e) {
+scrn.onkeydown = function (e) {
   if (e.keyCode == 32 || e.keyCode == 87 || e.keyCode == 38) {
     switch (state.curr) {
       case state.getReady:
@@ -69,6 +69,7 @@ const SFX = {
   die: new Audio(),
   played: false,
 };
+
 const gnd = {
   sprite: new Image(),
   x: 0,
@@ -83,6 +84,7 @@ const gnd = {
     this.x = this.x % (this.sprite.width / 2);
   },
 };
+
 const bg = {
   sprite: new Image(),
   x: 0,
@@ -92,6 +94,7 @@ const bg = {
     sctx.drawImage(this.sprite, this.x, y);
   },
 };
+
 const pipe = {
   top: { sprite: new Image() },
   bot: { sprite: new Image() },
@@ -102,24 +105,18 @@ const pipe = {
     for (let i = 0; i < this.pipes.length; i++) {
       let p = this.pipes[i];
       sctx.drawImage(this.top.sprite, p.x, p.y);
-      sctx.drawImage(
-        this.bot.sprite,
-        p.x,
-        p.y + parseFloat(this.top.sprite.height) + this.gap
-      );
+      sctx.drawImage(this.bot.sprite, p.x, p.y + this.top.sprite.height + this.gap);
     }
   },
   update: function () {
     if (state.curr != state.Play) return;
     if (frames % 100 == 0) {
       this.pipes.push({
-        x: parseFloat(scrn.width),
+        x: scrn.width,
         y: -210 * Math.min(Math.random() + 1, 1.8),
       });
     }
-    this.pipes.forEach((pipe) => {
-      pipe.x -= dx;
-    });
+    this.pipes.forEach((p) => (p.x -= dx));
 
     if (this.pipes.length && this.pipes[0].x < -this.top.sprite.width) {
       this.pipes.shift();
@@ -127,6 +124,7 @@ const pipe = {
     }
   },
 };
+
 const bird = {
   animations: [
     { sprite: new Image() },
@@ -151,7 +149,7 @@ const bird = {
     sctx.restore();
   },
   update: function () {
-    let r = parseFloat(this.animations[0].sprite.width) / 2;
+    let r = this.animations[0].sprite.width / 2;
     switch (state.curr) {
       case state.getReady:
         this.rotatation = 0;
@@ -164,10 +162,10 @@ const bird = {
         this.setRotation();
         this.speed += this.gravity;
 
-        // إلغاء الخسارة عند الاصطدام بالأنابيب أو الأرض
-        // if (this.y + r >= gnd.y || this.collisioned()) {
-        //   state.curr = state.gameOver;
-        // }
+        // تعليق كود الخسارة (مفعل وقت الحاجة)
+        if (this.y + r >= gnd.y /* || this.collisioned() */) {
+          // state.curr = state.gameOver;
+        }
 
         break;
       case state.gameOver:
@@ -185,7 +183,6 @@ const bird = {
             SFX.played = true;
           }
         }
-
         break;
     }
     this.frame = this.frame % this.animations.length;
@@ -199,33 +196,44 @@ const bird = {
   setRotation: function () {
     if (this.speed <= 0) {
       this.rotatation = Math.max(-25, (-25 * this.speed) / (-1 * this.thrust));
-    } else if (this.speed > 0) {
+    } else {
       this.rotatation = Math.min(90, (90 * this.speed) / (this.thrust * 2));
     }
   },
   collisioned: function () {
-    if (!pipe.pipes.length) return;
+    if (!pipe.pipes.length) return false;
     let bird = this.animations[0].sprite;
     let x = pipe.pipes[0].x;
     let y = pipe.pipes[0].y;
     let r = bird.height / 4 + bird.width / 4;
-    let roof = y + parseFloat(pipe.top.sprite.height);
+    let roof = y + pipe.top.sprite.height;
     let floor = roof + pipe.gap;
-    let w = parseFloat(pipe.top.sprite.width);
-    if (this.x + r >= x) {
-      if (this.x + r < x + w) {
-        if (this.y - r <= roof || this.y + r >= floor) {
-          SFX.hit.play();
-          return true;
-        }
-      } else if (pipe.moved) {
-        UI.score.curr++;
-        SFX.score.play();
-        pipe.moved = false;
-      }
+    let w = pipe.top.sprite.width;
+
+    // احتساب السكور عند المرور
+    if (this.x > x + w && pipe.moved) {
+      UI.score.curr++;
+      SFX.score.play();
+      pipe.moved = false;
     }
+
+    // كود الخسارة (معلق)
+    /*
+    if (
+      this.x + r >= x &&
+      this.x - r <= x + w &&
+      (this.y - r <= roof || this.y + r >= floor)
+    ) {
+      state.curr = state.gameOver;
+      SFX.hit.play();
+      return true;
+    }
+    */
+
+    return false;
   },
 };
+
 const UI = {
   getReady: { sprite: new Image() },
   gameOver: { sprite: new Image() },
@@ -242,20 +250,18 @@ const UI = {
   draw: function () {
     switch (state.curr) {
       case state.getReady:
-        this.y = parseFloat(scrn.height - this.getReady.sprite.height) / 2;
-        this.x = parseFloat(scrn.width - this.getReady.sprite.width) / 2;
-        this.tx = parseFloat(scrn.width - this.tap[0].sprite.width) / 2;
-        this.ty =
-          this.y + this.getReady.sprite.height - this.tap[0].sprite.height;
+        this.y = (scrn.height - this.getReady.sprite.height) / 2;
+        this.x = (scrn.width - this.getReady.sprite.width) / 2;
+        this.tx = (scrn.width - this.tap[0].sprite.width) / 2;
+        this.ty = this.y + this.getReady.sprite.height - this.tap[0].sprite.height;
         sctx.drawImage(this.getReady.sprite, this.x, this.y);
         sctx.drawImage(this.tap[this.frame].sprite, this.tx, this.ty);
         break;
       case state.gameOver:
-        this.y = parseFloat(scrn.height - this.gameOver.sprite.height) / 2;
-        this.x = parseFloat(scrn.width - this.gameOver.sprite.width) / 2;
-        this.tx = parseFloat(scrn.width - this.tap[0].sprite.width) / 2;
-        this.ty =
-          this.y + this.gameOver.sprite.height - this.tap[0].sprite.height;
+        this.y = (scrn.height - this.gameOver.sprite.height) / 2;
+        this.x = (scrn.width - this.gameOver.sprite.width) / 2;
+        this.tx = (scrn.width - this.tap[0].sprite.width) / 2;
+        this.ty = this.y + this.gameOver.sprite.height - this.tap[0].sprite.height;
         sctx.drawImage(this.gameOver.sprite, this.x, this.y);
         sctx.drawImage(this.tap[this.frame].sprite, this.tx, this.ty);
         break;
@@ -277,10 +283,7 @@ const UI = {
         sctx.font = "40px Squada One";
         let sc = `SCORE :     ${this.score.curr}`;
         try {
-          this.score.best = Math.max(
-            this.score.curr,
-            localStorage.getItem("best")
-          );
+          this.score.best = Math.max(this.score.curr, localStorage.getItem("best"));
           localStorage.setItem("best", this.score.best);
           let bs = `BEST  :     ${this.score.best}`;
           sctx.fillText(sc, scrn.width / 2 - 80, scrn.height / 2 + 0);
@@ -291,7 +294,6 @@ const UI = {
           sctx.fillText(sc, scrn.width / 2 - 85, scrn.height / 2 + 15);
           sctx.strokeText(sc, scrn.width / 2 - 85, scrn.height / 2 + 15);
         }
-
         break;
     }
   },
@@ -302,6 +304,7 @@ const UI = {
   },
 };
 
+// تحميل الصور والصوتيات
 gnd.sprite.src = "img/ground.png";
 bg.sprite.src = "img/BG.png";
 pipe.top.sprite.src = "img/toppipe.png";
@@ -314,6 +317,7 @@ bird.animations[0].sprite.src = "img/bird/b0.png";
 bird.animations[1].sprite.src = "img/bird/b1.png";
 bird.animations[2].sprite.src = "img/bird/b2.png";
 bird.animations[3].sprite.src = "img/bird/b0.png";
+
 SFX.start.src = "sfx/start.wav";
 SFX.flap.src = "sfx/flap.wav";
 SFX.score.src = "sfx/score.wav";
