@@ -2,41 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Animated Heart Drawing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Heart</title>
   <style>
     body {
       background-color: black;
       color: white;
       font-family: monospace;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
+
     pre {
       background-color: #222;
       color: #0f0;
-      padding: 15px;
-      width: 90%;
-      max-width: 700px;
-      margin: 20px auto;
+      padding: 12px;
+      margin: 10px;
       border-radius: 8px;
       text-align: left;
       white-space: pre-wrap;
       word-break: break-word;
+      max-height: 250px;
+      overflow-y: auto;
+      font-size: 13px;
     }
+
     canvas {
       border: 1px solid #f73487;
-      margin-top: 20px;
       background-color: black;
+      margin: 10px auto;
+      display: block;
+      width: 90vw;
+      height: 90vw; /* مربّع مناسب للموبايل */
     }
+
     button {
-      margin-top: 20px;
+      margin: 15px;
       padding: 10px 20px;
-      font-size: 18px;
+      font-size: 16px;
       background-color: #f73487;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #ff5c9e;
     }
@@ -44,8 +55,8 @@
 </head>
 <body>
 
-  <h2> بحبك اوي يا شهد</h2>
-<h3> 🥺🫂انا اسف </h3>
+  <h2 style="font-size: 18px; margin-top: 15px;">Python Heart Code</h2>
+
   <pre id="code">
 from math import sin, cos
 from turtle import *
@@ -75,8 +86,8 @@ end_fill()
 done()
   </pre>
 
-  <canvas id="heartCanvas" width="600" height="600"></canvas>
-  <br>
+  <canvas id="heartCanvas" width="300" height="300"></canvas>
+
   <button onclick="drawHeart()">Run The Code</button>
 
   <script>
@@ -94,7 +105,7 @@ done()
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       ctx.strokeStyle = "#f73487";
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1.5;
 
       let k = 0;
       let first = true;
@@ -107,8 +118,8 @@ done()
           return;
         }
 
-        const x = heartX(k) * 20 + canvas.width / 2;
-        const y = -heartY(k) * 20 + canvas.height / 2;
+        const x = heartX(k) * 10 + canvas.width / 2;
+        const y = -heartY(k) * 10 + canvas.height / 2;
 
         if (first) {
           ctx.moveTo(x, y);
