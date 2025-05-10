@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animated Heart Drawing</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: monospace;
+      text-align: center;
+    }
+    pre {
+      background-color: #222;
+      color: #0f0;
+      padding: 15px;
+      width: 90%;
+      max-width: 700px;
+      margin: 20px auto;
+      border-radius: 8px;
+      text-align: left;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    canvas {
+      border: 1px solid #f73487;
+      margin-top: 20px;
+      background-color: black;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #f73487;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff5c9e;
+    }
+  </style>
+</head>
+<body>
+
+  <h2> بحبك اوي يا شهد</h2>
+<h3> 🥺🫂انا اسف </h3>
+  <pre id="code">
+from math import sin, cos
+from turtle import *
+
+def hearta(K):
+    return 15 * sin(K) ** 3
+
+def heartb(K):
+    return 12 * cos(K) - 5 * cos(2 * K) - 2 * cos(3 * K) - cos(4 * K)
+
+speed(0)
+bgcolor("black")
+color("#f73487", "#f73487")
+penup()
+
+begin_fill()
+
+K = 0
+while K &lt; 2 * 3.1416:
+    x = hearta(K) * 20
+    y = heartb(K) * 20
+    goto(x, y)
+    pendown()
+    K += 0.01
+
+end_fill()
+done()
+  </pre>
+
+  <canvas id="heartCanvas" width="600" height="600"></canvas>
+  <br>
+  <button onclick="drawHeart()">Run The Code</button>
+
+  <script>
+    function heartX(k) {
+      return 15 * Math.sin(k) ** 3;
+    }
+
+    function heartY(k) {
+      return 12 * Math.cos(k) - 5 * Math.cos(2 * k) - 2 * Math.cos(3 * k) - Math.cos(4 * k);
+    }
+
+    function drawHeart() {
+      const canvas = document.getElementById("heartCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.strokeStyle = "#f73487";
+      ctx.lineWidth = 2;
+
+      let k = 0;
+      let first = true;
+
+      const drawStep = () => {
+        if (k >= Math.PI * 2) {
+          ctx.closePath();
+          ctx.fillStyle = "#f73487";
+          ctx.fill();
+          return;
+        }
+
+        const x = heartX(k) * 20 + canvas.width / 2;
+        const y = -heartY(k) * 20 + canvas.height / 2;
+
+        if (first) {
+          ctx.moveTo(x, y);
+          first = false;
+        } else {
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+
+        k += 0.02;
+        requestAnimationFrame(drawStep);
+      };
+
+      drawStep();
+    }
+  </script>
+</body>
+</html>
