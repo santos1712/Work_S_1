@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لعبة عربيات</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; background: #222; font-family: sans-serif; text-align: center; color: white; }
+    #menu {
+      padding: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      background: #444;
+      color: white;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+      text-align: center;
+    }
+    #gameArea {
+      display: none;
+      margin: 10px auto;
+      width: 90vw;
+      max-width: 400px;
+      height: 600px;
+      background: #111;
+      position: relative;
+      border: 2px solid white;
+      overflow: hidden;
+    }
+    #score {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.5);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 18px;
+      z-index: 10;
+    }
+    .car {
+      position: absolute;
+      width: 15%;
+      height: 80px;
+      background-image: url('player-car.png'); /* ← حط اسم صورة اللاعب هنا */
+      background-size: cover;
+      background-position: center;
+      bottom: 10px;
+      left: 42.5%;
+    }
+    .obstacle {
+      position: absolute;
+      width: 15%;
+      height: 80px;
+      background-image: url('enemy-car.png'); /* ← حط اسم صورة العقبة هنا */
+      background-size: cover;
+      background-position: center;
+      top: -100px;
+    }
+    #controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .control-btn {
+      width: 80px;
+      height: 50px;
+      font-size: 24px;
+      background: #555;
+      color: white;
+      border: none;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="menu">
+    <h1>اختر مستوى الصعوبة</h1>
+    <button onclick="startGame(2000)">سهل</button>
+    <button onclick="startGame(1200)">متوسط</button>
+    <button onclick="startGame(600)">صعب</button>
+
+    <div style="margin-top:20px">
+      <input type="number" id="secretInput" placeholder="أدخل الرقم السري">
+      <br>
+      <button onclick="checkSecret()">إدخال</button>
+    </div>
+  </div>
+
+  <div id="gameArea">
+    <div id="score">السكور: 0</div>
+    <div class="car" id="playerCar"></div>
+  </div>
+
+  <div id="controls">
+    <button class="control-btn" onclick="moveLeft()">◀</button>
+    <button class="control-btn" onclick="moveRight()">▶</button>
+  </div>
+
+  <script>
+    const car = document.getElementById("playerCar");
+    const gameArea = document.getElementById("gameArea");
+    const scoreDisplay = document.getElementById("score");
+    let carX = 42.5;
+    let gameInterval;
+    let speed = 5;
+    let gameRunning = false;
+    let allowCrash = true;
+    let score = 0;
+
+    function moveLeft() {
+      if (carX > 0) {
+        carX -= 5;
+        car.style.left = carX + "%";
+      }
+    }
+
+    function moveRight() {
+      if (carX < 85) {
+        carX += 5;
+        car.style.left = carX + "%";
+      }
+    }
+
+    function startGame(difficulty) {
+      document.getElementById("menu").style.display = "none";
+      gameArea.style.display = "block";
+      gameRunning = true;
+      allowCrash = true;
+      gameInterval = setInterval(() => createObstacle(), difficulty);
+    }
+
+    function checkSecret() {
+      const val = document.getElementById("secretInput").value;
+      if (val === "17122007") {
+        allowCrash = false;
+        document.getElementById("menu").style.display = "none";
+        gameArea.style.display = "block";
+        gameRunning = true;
+        gameInterval = setInterval(() => createObstacle(), 1200);
+      } else {
+        alert("رقم خاطئ");
+      }
+    }
+
+    function createObstacle() {
+      const obs = document.createElement("div");
+      obs.classList.add("obstacle");
+      obs.style.left = Math.floor(Math.random() * 85) + "%";
+      gameArea.appendChild(obs);
+
+      let y = -80;
+      const move = setInterval(() => {
+        if (!gameRunning) return;
+        y += speed;
+        obs.style.top = y + "px";
+
+        const carLeft = parseFloat(car.style.left);
+        const obsLeft = parseFloat(obs.style.left);
+
+        if (
+          y + 80 >= 520 && y <= 600 &&
+          Math.abs(carLeft - obsLeft) < 15
+        ) {
+          if (allowCrash) {
+            clearInterval(move);
+            alert("Game Over!");
+            location.reload();
+          }
+        }
+
+        if (y > 600) {
+          clearInterval(move);
+          obs.remove();
+          score++;
+          scoreDisplay.innerText = "السكور: " + score;
+        }
+      }, 20);
+    }
+  </script>
+
+</body>
+</html>
