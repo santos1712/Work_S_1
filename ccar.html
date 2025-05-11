@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { margin: 0; background: #222; font-family: sans-serif; text-align: center; color: white; }
-    #menu {
-      padding: 20px;
-    }
+    #menu { padding: 20px; }
     button {
       padding: 10px 20px;
       margin: 10px;
@@ -17,7 +15,8 @@
       border: none;
       background: #444;
       color: white;
-      user-select: none; /* منع النسخ */
+      user-select: none;
+      -webkit-user-select: none;
     }
     input {
       padding: 10px;
@@ -81,7 +80,8 @@
       color: white;
       border: none;
       border-radius: 10px;
-      user-select: none; /* منع النسخ */
+      user-select: none;
+      -webkit-user-select: none;
     }
   </style>
 </head>
@@ -191,24 +191,44 @@
       }, 20);
     }
 
-    // أزرار التحكم
+    // دعم الضغط مرة واحدة
     document.getElementById("leftBtn").addEventListener("click", moveLeft);
     document.getElementById("rightBtn").addEventListener("click", moveRight);
 
-    // الضغط المطول
-    let isLeftPressed = false;
-    let isRightPressed = false;
+    // دعم الضغط المطول (ماوس + لمس)
+    let moveLeftInterval, moveRightInterval;
 
-    document.getElementById("leftBtn").addEventListener("mousedown", () => isLeftPressed = true);
-    document.getElementById("leftBtn").addEventListener("mouseup", () => isLeftPressed = false);
+    function startHoldMove(direction) {
+      if (direction === 'left') {
+        moveLeftInterval = setInterval(moveLeft, 100);
+      } else {
+        moveRightInterval = setInterval(moveRight, 100);
+      }
+    }
 
-    document.getElementById("rightBtn").addEventListener("mousedown", () => isRightPressed = true);
-    document.getElementById("rightBtn").addEventListener("mouseup", () => isRightPressed = false);
+    function stopHoldMove() {
+      clearInterval(moveLeftInterval);
+      clearInterval(moveRightInterval);
+    }
 
-    setInterval(() => {
-      if (isLeftPressed) moveLeft();
-      if (isRightPressed) moveRight();
-    }, 100); // للتحرك عند الضغط المطول
+    const leftBtn = document.getElementById("leftBtn");
+    const rightBtn = document.getElementById("rightBtn");
+
+    // Mouse events
+    leftBtn.addEventListener("mousedown", () => startHoldMove('left'));
+    leftBtn.addEventListener("mouseup", stopHoldMove);
+    leftBtn.addEventListener("mouseleave", stopHoldMove);
+
+    rightBtn.addEventListener("mousedown", () => startHoldMove('right'));
+    rightBtn.addEventListener("mouseup", stopHoldMove);
+    rightBtn.addEventListener("mouseleave", stopHoldMove);
+
+    // Touch events
+    leftBtn.addEventListener("touchstart", e => { e.preventDefault(); startHoldMove('left'); });
+    leftBtn.addEventListener("touchend", stopHoldMove);
+
+    rightBtn.addEventListener("touchstart", e => { e.preventDefault(); startHoldMove('right'); });
+    rightBtn.addEventListener("touchend", stopHoldMove);
   </script>
 
 </body>
