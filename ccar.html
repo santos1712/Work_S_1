@@ -51,7 +51,7 @@
       position: absolute;
       width: 15%;
       height: 80px;
-      background-image: url('car.png'); /* ← حط اسم صورة اللاعب هنا */
+      background-image: url('car.png');
       background-size: cover;
       background-position: center;
       bottom: 10px;
@@ -61,7 +61,7 @@
       position: absolute;
       width: 15%;
       height: 80px;
-      background-image: url('ak.png'); /* ← حط اسم صورة العقبة هنا */
+      background-image: url('ak.png');
       background-size: cover;
       background-position: center;
       top: -100px;
@@ -104,8 +104,8 @@
   </div>
 
   <div id="controls">
-    <button class="control-btn" onclick="moveLeft()">◀</button>
-    <button class="control-btn" onclick="moveRight()">▶</button>
+    <button class="control-btn" id="leftBtn">◀</button>
+    <button class="control-btn" id="rightBtn">▶</button>
   </div>
 
   <script>
@@ -188,6 +188,33 @@
         }
       }, 20);
     }
+
+    // الضغط المطول
+    let leftInterval, rightInterval;
+    const leftBtn = document.getElementById("leftBtn");
+    const rightBtn = document.getElementById("rightBtn");
+
+    // موبايل + كمبيوتر يسار
+    leftBtn.addEventListener("mousedown", () => {
+      leftInterval = setInterval(moveLeft, 100);
+    });
+    leftBtn.addEventListener("mouseup", () => clearInterval(leftInterval));
+    leftBtn.addEventListener("mouseleave", () => clearInterval(leftInterval));
+    leftBtn.addEventListener("touchstart", () => {
+      leftInterval = setInterval(moveLeft, 100);
+    });
+    leftBtn.addEventListener("touchend", () => clearInterval(leftInterval));
+
+    // موبايل + كمبيوتر يمين
+    rightBtn.addEventListener("mousedown", () => {
+      rightInterval = setInterval(moveRight, 100);
+    });
+    rightBtn.addEventListener("mouseup", () => clearInterval(rightInterval));
+    rightBtn.addEventListener("mouseleave", () => clearInterval(rightInterval));
+    rightBtn.addEventListener("touchstart", () => {
+      rightInterval = setInterval(moveRight, 100);
+    });
+    rightBtn.addEventListener("touchend", () => clearInterval(rightInterval));
   </script>
 
 </body>
