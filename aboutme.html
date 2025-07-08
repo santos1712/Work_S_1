@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Me - Marwan Santos</title>
+  <style>
+    body {
+      margin:0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      overflow-x:hidden;
+    }
+
+    /* خلفية بلوب متحركة */
+    .blobs-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .blob {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      animation: moveBlob 20s infinite ease-in-out;
+      filter: blur(80px);
+    }
+    .blob:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+    .blob:nth-child(2) { top: 40%; left: 60%; animation-delay: 5s; }
+    .blob:nth-child(3) { top: 80%; left: 30%; animation-delay: 10s; }
+
+    @keyframes moveBlob {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(100px, -100px) scale(1.3); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    header {
+      text-align:center;
+      padding:40px 20px;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: clamp(1.2em, 5vw, 2.5em);
+      margin:0;
+      letter-spacing:2px;
+      white-space: nowrap;
+      background: linear-gradient(90deg, #ffcc00, #fff, #ffcc00);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: shine 4s linear infinite;
+      text-shadow: 0 0 20px #ffd700;
+    }
+
+    .crown {
+      font-size:1.5em;
+    }
+
+    section {
+      padding:20px;
+      width:100%;
+      box-sizing:border-box;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding:20px;
+      border-radius:15px;
+      margin-bottom:20px;
+      backdrop-filter:blur(5px);
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 20px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease;
+      width:100%;
+      box-sizing:border-box;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 1s forwards;
+    }
+    .card:nth-child(1) { animation-delay: 0.3s; }
+    .card:nth-child(2) { animation-delay: 0.6s; }
+    .card:nth-child(3) { animation-delay: 0.9s; }
+    .card:nth-child(4) { animation-delay: 1.2s; }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .btn {
+      background:#00adb5;
+      border:none;
+      color:#fff;
+      padding:10px 20px;
+      border-radius:25px;
+      cursor:pointer;
+      font-size:1em;
+      margin:5px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background:#007b80;
+      animation: pulse 0.8s;
+    }
+
+    .hidden {
+      display:none;
+    }
+
+    input[type="password"] {
+      padding:10px;
+      border-radius:5px;
+      border:none;
+      margin:5px 0;
+      width:60%;
+    }
+
+    .social {
+      display:flex;
+      align-items:center;
+      margin:10px 0;
+      flex-wrap:wrap;
+    }
+
+    .social img {
+      width:35px;
+      height:35px;
+      margin-left:10px;
+      transition: transform 0.6s ease;
+    }
+
+    .social img:hover {
+      transform: rotate(360deg) scale(1.2);
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shine {
+      0% { background-position: 0%; }
+      100% { background-position: 200%; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size:1.5em;
+      }
+      .btn {
+        width:100%;
+        margin-top:10px;
+      }
+      input[type="password"] {
+        width:100%;
+      }
+      .social {
+        flex-direction:column;
+        align-items:flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- خلفية متحركة -->
+  <div class="blobs-bg">
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>
+
+  <header>
+    <h1><span class="crown">👑</span> Marwan Santos <span class="crown">👑</span></h1>
+  </header>
+
+  <section>
+    <!-- واتساب -->
+    <div class="card">
+      <h2>تواصل واتساب</h2>
+      <p>01559447470</p>
+      <button class="btn" onclick="window.open('https://wa.me/201559447470')">راسلني واتساب</button>
+    </div>
+
+    <!-- المكالمات -->
+    <div class="card">
+      <h2>مكالمات هاتفية</h2>
+      <p>01206733081</p>
+      <button class="btn" onclick="window.location.href='tel:01206733081'">اتصل بي</button>
+      <hr/>
+      <p>01286878364</p>
+      <button class="btn" onclick="window.location.href='tel:01286878364'">اتصل بي</button>
+    </div>
+
+    <!-- رقم برايفت -->
+    <div class="card" id="privateCard">
+      <h2>رقم برايفت</h2>
+      <div id="passwordDiv">
+        <input type="password" id="passInput" placeholder="ادخل كلمة المرور" />
+        <button class="btn" onclick="checkPassword()">ادخل</button>
+      </div>
+      <div id="privateContent" class="hidden">
+        <p>01017103152</p>
+        <button class="btn" onclick="window.open('https://wa.me/201017103152')">راسلني واتساب</button>
+        <button class="btn" onclick="window.location.href='tel:01017103152'">اتصل بي</button>
+      </div>
+    </div>
+
+    <!-- السوشيال ميديا -->
+    <div class="card">
+      <h2>حساباتي على السوشيال ميديا</h2>
+      <div class="social">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"/>
+        <span>Facebook - santos_x1x</span>
+        <button class="btn" onclick="window.open('https://www.facebook.com/share/1Bvhm8tVVX/')">افتح الحساب</button>
+      </div>
+      <div class="social">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"/>
+        <span>Instagram - santos_x1x</span>
+        <button class="btn" onclick="window.open('https://www.instagram.com/santos_x1x?igsh=MWtqNGozdXY1NHp4OA==')">افتح الحساب</button>
+      </div>
+      <div class="social">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/c4/Snapchat_logo.svg/1200px-Snapchat_logo.svg.png" alt="Snapchat"/>
+        <span>Snapchat - santos_171207</span>
+        <button class="btn" onclick="window.open('https://www.snapchat.com/add/santos_171207?share_id=aXAmjVa6aSw&locale=en-US')">افتح الحساب</button>
+      </div>
+      <div class="social">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Tiktok_icon.svg/2000px-Tiktok_icon.svg.png" alt="TikTok"/>
+        <span>TikTok - marwan_santos1712</span>
+        <button class="btn" onclick="window.open('https://www.tiktok.com/@marwan_santos1712?_t=ZS-8xrMaUckqT2&_r=1')">افتح الحساب</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function checkPassword(){
+      const pass = document.getElementById("passInput").value;
+      if(pass === "17122007"){
+        document.getElementById("passwordDiv").classList.add("hidden");
+        document.getElementById("privateContent").classList.remove("hidden");
+      } else {
+        alert("الباسورد غلط يا نجم");
+      }
+    }
+  </script>
+</body>
+</html>
