@@ -1,0 +1,203 @@
+<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>السيرة الذاتية - مروان مصطفى عبدالرازق</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(to right, #0f0f0f, #1a1a1a);
+      color: #f5f5f5;
+      line-height: 1.6;
+      padding: 40px 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      opacity: 0.05;
+      z-index: 0;
+      animation: stars 60s linear infinite;
+    }
+    @keyframes stars {
+      0% {background-position: 0 0;}
+      100% {background-position: 1000px 1000px;}
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+      background: rgba(30, 30, 30, 0.6);
+      padding: 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+      position: relative;
+      z-index: 2;
+      animation: fadeIn 2s ease;
+      transition: all 0.3s ease-in-out;
+    }
+    h1, h2 {
+      color: #00ffe5;
+      margin-bottom: 10px;
+      animation: slideIn 1.2s ease;
+      transition: color 0.3s;
+    }
+    h1:hover, h2:hover {
+      color: #00ffff;
+    }
+    p, li {
+      margin-bottom: 10px;
+      font-size: 1rem;
+      animation: fadeInUp 1.5s ease;
+    }
+    ul {
+      padding-right: 20px;
+    }
+    a {
+      color: #00bfff;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0} to {opacity: 1}
+    }
+    @keyframes slideIn {
+      from {transform: translateX(50px); opacity: 0} to {transform: translateX(0); opacity: 1}
+    }
+    @keyframes fadeInUp {
+      from {transform: translateY(20px); opacity: 0} to {transform: translateY(0); opacity: 1}
+    }
+    body, a, button {
+      cursor: url('https://cur.cursors-4u.net/cursors/cur-13/cur1163.cur'), auto;
+    }/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+  h2 {
+    font-size: 1.4rem;
+  }
+  p, li {
+    font-size: 0.95rem;
+  }
+}
+@media (max-width: 480px) {
+  body {
+    padding: 20px 10px;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+  p, li {
+    font-size: 0.9rem;
+  }
+}
+.call-button, .whatsapp-button {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 5px 15px;
+  background-color: #00b894;
+  color: #fff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+}
+.call-button:hover, .whatsapp-button:hover {
+  background-color: #00cec9;
+}
+.note-box {
+  margin-top: 40px;
+  padding: 20px;
+  border: 2px solid #00ffe5;
+  border-radius: 12px;
+  background-color: rgba(0, 255, 229, 0.1);
+  color: #00ffe5;
+  font-weight: bold;
+  text-align: center;
+  animation: fadeIn 2s ease-in-out;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>مروان مصطفى عبدالرازق</h1>
+    <p>سوبر فايزر أو مساعد مدير</p>
+    <p>تاريخ الميلاد: 17 يوليو 2008</p><div class="section">
+  <h2>نبذة شخصية</h2>
+  <p>أنا شخص أتعلم بسرعة، وأتأقلم بسهولة مع أي بيئة عمل. عندي شغف كبير بتطوير نفسي، وحب للتكنولوجيا والبرمجة، وبسعى أكون إضافة قوية لأي فريق أكون فيه.</p>
+</div>
+
+<div class="section">
+  <h2>المهارات الشخصية</h2>
+  <ul>
+    <li>القدرة على العمل تحت الضغط</li>
+    <li>الاحترام وحل المشاكل</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>الخبرات</h2>
+  <ul>
+    <li>كاشير في عربية مشروبات داخل المنتزه – سنة كاملة</li>
+    <li>كاشير في مطعم أبو فارس السوري – ثم تمت ترقيتي إلى سوبر فايزر</li>
+    <li>كنت على وشك الترقية لمنصب مساعد مدير</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>التعليم</h2>
+  <p>طالب حاليًا</p>
+</div>
+
+<div class="section">
+  <h2>التواصل</h2>
+  <ul>
+    <li>
+      📞 01017103152
+      <a class="call-button" href="tel:01017103152">اتصل بي</a>
+    </li>
+    <li>
+      💬 واتساب: 01559447470
+      <a class="whatsapp-button" href="https://wa.me/201559447470" target="_blank">راسلني واتساب</a>
+    </li>
+    <li>
+      📧 <a href="mailto:marwansantos70@gmail.com">marwansantos70@gmail.com</a>
+    </li>
+  </ul>
+</div>
+
+<div class="note-box">
+  💡 ملحوظة: هذا الـ CV بالكامل من أعمالي الشخصية.
+</div>
+
+  </div>
+</body>
+</html>
