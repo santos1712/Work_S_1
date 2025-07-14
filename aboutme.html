@@ -263,5 +263,16 @@
   <div style="text-align:center; margin: 50px 0 20px 0; color:#ffcc00; font-size: 1.2em;">
   عدد الزوار: <span id="visitorCount">جاري التحميل...</span> 🚀
   </div>
+  <script>
+  // عداد الزوار باستخدام CountAPI
+  fetch('https://api.countapi.xyz/hit/marwan-santos-site/visits')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('visitorCount').innerText = data.value;
+    })
+    .catch(() => {
+      document.getElementById('visitorCount').innerText = 'خطأ في التحميل';
+    });
+  </script>
 </body>
 </html>
