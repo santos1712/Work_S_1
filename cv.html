@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CV Interactive Terminal - Marwan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #0d0d0d;
+      color: #00ffcc;
+      font-family: 'Cairo', monospace;
+      padding: 20px;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .terminal {
+      background-color: #000;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 10px #00ffcc88;
+      height: 90vh;
+      overflow-y: auto;
+    }
+    .line {
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+    }
+    .input-line {
+      display: flex;
+    }
+    .prompt {
+      margin-left: 10px;
+      color: #00ffff;
+    }
+    input {
+      background: transparent;
+      border: none;
+      color: #00ffcc;
+      outline: none;
+      width: 100%;
+      direction: rtl;
+    }
+    .btn-container {
+      margin-top: 20px;
+    }
+    button {
+      background: #00b894;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: 'Cairo';
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    button:hover {
+      background: #00cec9;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal" id="terminal">
+    <div class="line">> whoami</div>
+    <div class="line">مروان مصطفى عبدالرازق</div>
+    <div class="line">> start-assessment</div>
+  </div>
+  <script>
+    const terminal = document.getElementById("terminal");
+    const questions = [
+      "هل تبحث عن شخص يقدر يتحمل ضغط الشغل؟",
+      "هل تحتاج موظف سريع التعلم؟",
+      "هل العمل يتطلب إدارة فريق؟",
+      "هل تفضل شخص بيحترم المواعيد؟",
+      "هل مستعد تدّي فرصة لشاب موهوب عمره 17 سنة؟"
+    ];
+    let answers = [];
+    let current = 0;function askQuestion() {
+  if (current >= questions.length) return showResult();
+
+  const q = document.createElement("div");
+  q.className = "line";
+  q.innerText = questions[current] + " (نعم/لا)";
+  terminal.appendChild(q);
+
+  const inputLine = document.createElement("div");
+  inputLine.className = "input-line";
+  const prompt = document.createElement("span");
+  prompt.className = "prompt";
+  prompt.innerText = ">";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.autofocus = true;
+  input.placeholder = "اكتب نعم أو لا واضغط Enter...";
+  inputLine.appendChild(prompt);
+  inputLine.appendChild(input);
+  terminal.appendChild(inputLine);
+  input.focus();
+  input.scrollIntoView({behavior: "smooth"});
+
+  input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      const value = input.value.trim();
+      if (value === "نعم" || value === "لا") {
+        answers.push(value);
+        input.disabled = true;
+        current++;
+        askQuestion();
+      } else {
+        alert("من فضلك جاوب بنعم أو لا فقط");
+      }
+    }
+  });
+}
+
+function showResult() {
+  let yesCount = answers.filter(a => a === "نعم").length;
+  const result = document.createElement("div");
+  result.className = "line";
+  if (yesCount >= 3) {
+    result.innerText = "> النتيجة:\nأعتقد إنك لقيت الشخص المناسب 👏";
+    const btns = document.createElement("div");
+    btns.className = "btn-container";
+    btns.innerHTML = `
+      <button onclick="window.open('Cv.html')">📄 تحميل CV</button>
+      <button onclick="window.open('https://wa.me/201559447470')">💬 راسلني واتساب</button>
+    `;
+    terminal.appendChild(result);
+    terminal.appendChild(btns);
+  } else {
+    result.innerText = "> النتيجة:\nقد لا أكون الأنسب حاليًا، لكن شكراً لتقييمك!";
+    terminal.appendChild(result);
+  }
+}
+
+askQuestion();
+
+  </script>
+</body>
+</html>
