@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Love You Effect</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #controls {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 8px;
+      color: white;
+      z-index: 10;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="controls">
+    <label>النص: <input id="text" type="text" value="I Love You 💖" /></label><br />
+    <label>اللون: <input id="color" type="color" value="#ff007f" /></label><br />
+    <label>السرعة: <input id="speed" type="range" min="1" max="10" value="3" /></label>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    const fontSize = 22;
+
+    let drops = [];
+    let columns = 0;
+    let text = "I Love You 💖";
+
+    function resetDrops() {
+      text = document.getElementById("text").value;
+      const colWidth = ctx.measureText(text).width + 20; // مساحة مناسبة لكل عمود
+      columns = Math.floor(width / colWidth);
+      drops = Array(columns).fill(1);
+    }
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = document.getElementById("color").value;
+      ctx.font = fontSize + "px Arial";
+
+      const speed = parseInt(document.getElementById("speed").value);
+
+      for (let i = 0; i < columns; i++) {
+        ctx.fillText(text, i * (width / columns), drops[i] * fontSize);
+
+        if (drops[i] * fontSize > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i] += 1 + (speed * 0.2);
+      }
+    }
+
+    setInterval(draw, 50);
+    resetDrops();
+
+    window.addEventListener("resize", () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      resetDrops();
+    });
+
+    document.getElementById("text").addEventListener("input", resetDrops);
+  </script>
+
+</body>
+</html>
