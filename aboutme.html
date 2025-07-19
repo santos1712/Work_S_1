@@ -13,7 +13,6 @@
       overflow-x:hidden;
     }
 
-    /* خلفية بلوب متحركة */
     .blobs-bg {
       position: fixed;
       top: 0;
@@ -180,7 +179,6 @@
   </style>
 </head>
 <body>
-  <!-- خلفية متحركة -->
   <div class="blobs-bg">
     <div class="blob"></div>
     <div class="blob"></div>
@@ -197,6 +195,7 @@
       <h2>تواصل واتساب</h2>
       <p>01559447470</p>
       <button class="btn" onclick="window.open('https://wa.me/201559447470')">راسلني واتساب</button>
+      <button class="btn" onclick="saveContact('👑Marwan Santos👑', '01559447470')">📇 أضف جهة اتصال</button>
     </div>
 
     <!-- المكالمات -->
@@ -204,9 +203,11 @@
       <h2>مكالمات هاتفية</h2>
       <p>01206733081</p>
       <button class="btn" onclick="window.location.href='tel:01206733081'">اتصل بي</button>
+      <button class="btn" onclick="saveContact('👑Marwan Santos👑', '01206733081')">📇 أضف جهة اتصال</button>
       <hr/>
       <p>01286878364</p>
       <button class="btn" onclick="window.location.href='tel:01286878364'">اتصل بي</button>
+      <button class="btn" onclick="saveContact('👑Marwan Santos👑', '01286878364')">📇 أضف جهة اتصال</button>
     </div>
 
     <!-- رقم برايفت -->
@@ -220,6 +221,7 @@
         <p>01017103152</p>
         <button class="btn" onclick="window.open('https://wa.me/201017103152')">راسلني واتساب</button>
         <button class="btn" onclick="window.location.href='tel:01017103152'">اتصل بي</button>
+        <button class="btn" onclick="saveContact('👑Marwan Santos👑', '01017103152')">📇 أضف جهة اتصال</button>
       </div>
     </div>
 
@@ -259,6 +261,26 @@
         alert("الباسورد غلط يا نجم");
       }
     }
+
+    function saveContact(name, phone) {
+      const vcardData = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+TEL;TYPE=CELL:${phone}
+END:VCARD
+      `.trim();
+
+      const blob = new Blob([vcardData], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${name}.vcf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   </script>
 </body>
-</html>
+  </html>
