@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حجر ورقة مقص توربو</title>
+<style>
+:root {
+  --bg1: #1e0033;
+  --bg2: #0f2027;
+  --bg3: #2c5364;
+  --win: #00ff99;
+  --lose: #ff3b3b;
+  --draw: #3bb3ff;
+  --text: #fff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+  background-size: 400% 400%;
+  animation: gradientBG 10s ease infinite;
+  color: var(--text);
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%;}
+  50% { background-position: 100% 50%;}
+  100% { background-position: 0% 50%;}
+}
+
+.container {
+  text-align: center;
+  max-width: 500px;
+  width: 95%;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  animation: fadeInDown 1s ease;
+}
+
+.players {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.player, .computer {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.emoji {
+  font-size: 70px;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  animation: slideUp 1s ease;
+}
+
+button.option {
+  flex: 1;
+  padding: 10px;
+  font-size: 24px;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+}
+button.option:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 0 15px rgba(255,255,255,0.4);
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.message {
+  margin: 10px 0;
+  font-size: 18px;
+  min-height: 24px;
+}
+
+.score {
+  display: flex;
+  justify-content: space-around;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px transparent);}
+  50% { transform: scale(1.2); filter: drop-shadow(0 0 20px var(--win));}
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0);}
+  25% { transform: translateX(-8px);}
+  50% { transform: translateX(8px);}
+  75% { transform: translateX(-5px);}
+}
+.flash-win { animation: pulse 0.6s ease; }
+.flash-lose { animation: shake 0.4s ease; }
+.flash-draw { animation: pulse 0.6s ease; filter: drop-shadow(0 0 20px var(--draw)); }
+
+body.win { background-color: var(--win);}
+body.lose { background-color: var(--lose);}
+body.draw { background-color: var(--draw);}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>حجر - ورقة - مقص</h1>
+  <div class="players">
+    <div class="player">
+      <div class="emoji" id="playerEmoji">❔</div>
+      <p>أنت</p>
+    </div>
+    <div class="computer">
+      <div class="emoji" id="computerEmoji">❔</div>
+      <p>الكمبيوتر</p>
+    </div>
+  </div>
+  <div class="options">
+    <button class="option" data-move="rock">✊</button>
+    <button class="option" data-move="paper">✋</button>
+    <button class="option" data-move="scissors">✌️</button>
+  </div>
+  <div class="message" id="message">اختر حركة للبدء</div>
+  <div class="score">
+    <div>فوز: <span id="wins">0</span></div>
+    <div>خسارة: <span id="losses">0</span></div>
+    <div>تعادل: <span id="draws">0</span></div>
+  </div>
+</div>
+
+<script>
+const playerEmoji = document.getElementById('playerEmoji');
+const computerEmoji = document.getElementById('computerEmoji');
+const message = document.getElementById('message');
+const winsEl = document.getElementById('wins');
+const lossesEl = document.getElementById('losses');
+const drawsEl = document.getElementById('draws');
+const options = document.querySelectorAll('.option');
+
+const emojis = { rock: '✊', paper: '✋', scissors: '✌️' };
+let wins = 0, losses = 0, draws = 0;
+
+function compChoice() {
+  return ['rock', 'paper', 'scissors'][Math.floor(Math.random() * 3)];
+}
+
+function decide(p, c) {
+  if (p === c) return 'draw';
+  if ((p === 'rock' && c === 'scissors') ||
+      (p === 'paper' && c === 'rock') ||
+      (p === 'scissors' && c === 'paper')) return 'win';
+  return 'lose';
+}
+
+function resetFlash() {
+  playerEmoji.className = 'emoji';
+  computerEmoji.className = 'emoji';
+  document.body.classList.remove('win','lose','draw');
+}
+
+options.forEach(btn => {
+  btn.addEventListener('click', () => {
+    resetFlash();
+    const playerMove = btn.dataset.move;
+    playerEmoji.textContent = emojis[playerMove];
+    const compMove = compChoice();
+    computerEmoji.textContent = emojis[compMove];
+    const result = decide(playerMove, compMove);
+
+    if (result === 'win') {
+      wins++;
+      winsEl.textContent = wins;
+      playerEmoji.classList.add('flash-win');
+      document.body.classList.add('win');
+      message.textContent = '🎉 فزت!';
+    } else if (result === 'lose') {
+      losses++;
+      lossesEl.textContent = losses;
+      playerEmoji.classList.add('flash-lose');
+      document.body.classList.add('lose');
+      message.textContent = '💔 خسرت!';
+    } else {
+      draws++;
+      drawsEl.textContent = draws;
+      playerEmoji.classList.add('flash-draw');
+      document.body.classList.add('draw');
+      message.textContent = '😐 تعادل!';
+    }
+
+    setTimeout(resetFlash, 700);
+  });
+});
+</script>
+</body>
+</html>
