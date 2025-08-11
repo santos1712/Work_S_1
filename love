@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>❤️ Marwan Santos Animated Heart ❤️</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+    /* Reset */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      background: radial-gradient(ellipse at center, #1a000f 0%, #000000 90%);
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #f73487;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-shadow:
+        0 0 5px #f73487,
+        0 0 10px #ff4fa3,
+        0 0 20px #ff2f8c;
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fadeInText 3s ease forwards 0.5s;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      color: #ffa5c4;
+      margin-bottom: 30px;
+      font-weight: 400;
+      opacity: 0;
+      animation: fadeInText 3s ease forwards 1.5s;
+    }
+
+    @keyframes fadeInText {
+      to {opacity: 1;}
+    }
+
+    /* Canvas covers the screen but stays centered */
+    #heartCanvas {
+      display: block;
+      margin: 0 auto;
+      background: transparent;
+      cursor: pointer;
+      max-width: 320px;
+      width: 80vw;
+      height: 80vw;
+      max-height: 320px;
+      filter: drop-shadow(0 0 8px #f73487);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1);}
+      50% { transform: scale(1.07);}
+    }
+
+    /* Stars background */
+    #stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Flying hearts container */
+    #flying-hearts {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 10;
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 18px;
+      background: #f73487;
+      transform-origin: center;
+      clip-path: polygon(
+        50% 0%,
+        100% 35%,
+        80% 100%,
+        50% 80%,
+        20% 100%,
+        0% 35%
+      );
+      filter: drop-shadow(0 0 5px #ff5c9e);
+      animation: floatUp 2.5s forwards ease-in;
+      opacity: 1;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-150px) scale(0.3) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="stars"></div>
+
+  <h1>Marwan Santos ❤</h1>
+  <h2>🥺🫂 والله تستاهلي</h2>
+
+  <canvas id="heartCanvas" width="320" height="320" title="اضغط على القلب ليطير حب"></canvas>
+
+  <div id="flying-hearts"></div>
+
+  <script>
+    // Create star background
+    const starsContainer = document.getElementById('stars');
+    const starCount = 120;
+
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement('div');
+      star.style.position = 'absolute';
+      star.style.width = `${Math.random() * 2 + 1}px`;
+      star.style.height = star.style.width;
+      star.style.background = 'white';
+      star.style.borderRadius = '50%';
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.opacity = Math.random();
+      star.style.filter = 'drop-shadow(0 0 4px white)';
+      starsContainer.appendChild(star);
+
+      // twinkle animation
+      star.animate(
+        [
+          {opacity: star.style.opacity},
+          {opacity: 0},
+          {opacity: star.style.opacity}
+        ],
+        {
+          duration: 4000 + Math.random() * 3000,
+          iterations: Infinity,
+          delay: Math.random() * 4000
+        }
+      );
+    }
+
+    // Heart shape functions
+    function heartX(k) {
+      return 15 * Math.sin(k) ** 3;
+    }
+
+    function heartY(k) {
+      return 12 * Math.cos(k) - 5 * Math.cos(2 * k) - 2 * Math.cos(3 * k) - Math.cos(4 * k);
+    }
+
+    const canvas = document.getElementById('heartCanvas');
+    const ctx = canvas.getContext('2d');
+    let animationId;
+    let k = 0;
+    let growing = true;
+    let scale = 1;
+
+    function drawHeart(scaleFactor = 1) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+
+      for (let angle = 0; angle <= Math.PI * 2; angle += 0.01) {
+        let x = heartX(angle) * 10 * scaleFactor + canvas.width / 2;
+        let y = -heartY(angle) * 10 * scaleFactor + canvas.height / 2;
+        if (angle === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.closePath();
+
+      // Gradient fill
+      let gradient = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, 10 * scaleFactor,
+        canvas.width / 2, canvas.height / 2, 100 * scaleFactor
+      );
+      gradient.addColorStop(0, '#ff82a9');
+      gradient.addColorStop(1, '#f73487');
+
+      ctx.fillStyle = gradient;
+      ctx.shadowColor = '#ff2f8c';
+      ctx.shadowBlur = 15 * scaleFactor;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#ff5c9e';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function animateHeartbeat() {
+      if (growing) {
+        scale += 0.005;
+        if (scale > 1.1) growing = false;
+      } else {
+        scale -= 0.005;
+        if (scale < 1) growing = true;
+      }
+      drawHeart(scale);
+      animationId = requestAnimationFrame(animateHeartbeat);
+    }
+
+    animateHeartbeat();
+
+    // Flying hearts on click
+    const flyingHeartsContainer = document.getElementById('flying-hearts');
+
+    canvas.addEventListener('click', (e) => {
+      for (let i = 0; i < 10; i++) {
+        createFlyingHeart(e.clientX, e.clientY);
+      }
+    });
+
+    function createFlyingHeart(x, y) {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+
+      // Start position near click with small random offset
+      heart.style.left = (x - 10 + (Math.random() - 0.5) * 20) + 'px';
+      heart.style.top = (y - 10 + (Math.random() - 0.5) * 20) + 'px';
+
+      // Random animation duration and delay for variation
+      heart.style.animationDuration = (2 + Math.random()) + 's';
+      heart.style.animationDelay = (Math.random() * 0.3) + 's';
+
+      flyingHeartsContainer.appendChild(heart);
+
+      // Remove heart after animation
+      heart.addEventListener('animationend', () => {
+        heart.remove();
+      });
+    }
+  </script>
+</body>
+</html>
