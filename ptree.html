@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timber Guy - Touch Version</title>
+<style>
+    body {
+        margin: 0;
+        background: #cce0ff;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    canvas {
+        display: block;
+        margin: auto;
+        background: url('https://i.ibb.co/PxXhP4n/bg.png') no-repeat center center/cover;
+    }
+    #cheatBtn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background: #e91e63;
+        color: white;
+        margin-top: 5px;
+    }
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+<button id="cheatBtn">Activate Cheat Mode</button>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// صور الجرافيك
+const imgTree = new Image();
+imgTree.src = "https://i.ibb.co/zJvQHtv/tree.png";
+
+const imgBranchLeft = new Image();
+imgBranchLeft.src = "https://i.ibb.co/n13P9R3/branch-left.png";
+
+const imgBranchRight = new Image();
+imgBranchRight.src = "https://i.ibb.co/6HZHcd6/branch-right.png";
+
+const imgPlayerLeft = new Image();
+imgPlayerLeft.src = "https://i.ibb.co/9pRPpbX/player-left.png";
+
+const imgPlayerRight = new Image();
+imgPlayerRight.src = "https://i.ibb.co/XZpWD9z/player-right.png";
+
+let playerSide;
+let score;
+let bestScore = localStorage.getItem("bestScore") || 0;
+let timeLeft;
+let branches;
+let gameOver;
+let cheatMode = false;
+
+const branchHeight = 60;
+const branchCount = 15;
+
+function initBranches() {
+    branches = [];
+    for (let i = 0; i < branchCount; i++) {
+        branches.push({
+            side: Math.random() > 0.7 ? (Math.random() > 0.5 ? "left" : "right") : "none"
+        });
+    }
+}
+
+function startGame() {
+    playerSide = "left";
+    score = 0;
+    timeLeft = 2;
+    gameOver = false;
+    initBranches();
+}
+
+function drawTree() {
+    ctx.drawImage(imgTree, canvas.width / 2 - 50, 0, 100, canvas.height);
+}
+
+function drawBranches() {
+    for (let i = 0; i < branchCount; i++) {
+        const y = i * branchHeight;
+        if (branches[i].side === "left") {
+            ctx.drawImage(imgBranchLeft, canvas.width / 2 - 120, y, 80, 20);
+        } else if (branches[i].side === "right") {
+            ctx.drawImage(imgBranchRight, canvas.width / 2 + 40, y, 80, 20);
+        }
+    }
+}
+
+function drawPlayer() {
+    if (playerSide === "left") {
+        ctx.drawImage(imgPlayerLeft, canvas.width / 2 - 100, canvas.height - 100, 50, 80);
+    } else {
+        ctx.drawImage(imgPlayerRight, canvas.width / 2 + 50, canvas.height - 100, 50, 80);
+    }
+}
+
+function drawScore() {
+    ctx.fillStyle = "#fff";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, 10, 30);
+    ctx.fillText("Best: " + bestScore, 10, 60);
+}
+
+function drawTimeBar() {
+    ctx.fillStyle = "red";
+    ctx.fillRect(0, 0, (timeLeft / 2) * canvas.width, 10);
+}
+
+function chop(side) {
+    if (gameOver) return;
+    playerSide = side;
+
+    if (branches[branches.length - 1].side === side && !cheatMode) {
+        endGame();
+        return;
+    }
+
+    score++;
+    if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("bestScore", bestScore);
+    }
+    if (!cheatMode) timeLeft = Math.min(timeLeft + 0.2, 2);
+
+    branches.pop();
+    branches.unshift({
+        side: Math.random() > 0.7 ? (Math.random() > 0.5 ? "left" : "right") : "none"
+    });
+}
+
+function endGame() {
+    gameOver = true;
+    alert("Game Over! Score: " + score + "\nTap to restart.");
+}
+
+function update() {
+    if (!gameOver && !cheatMode) {
+        timeLeft -= 0.01;
+        if (timeLeft <= 0) {
+            endGame();
+        }
+    }
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawTree();
+    drawBranches();
+    drawPlayer();
+    drawScore();
+    drawTimeBar();
+}
+
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+// التحكم باللمس / الكليك مع منع التكرار
+let inputLocked = false;
+
+function handleInput(e) {
+    e.preventDefault();
+    if (inputLocked) return;
+    inputLocked = true;
+
+    if (gameOver) {
+        startGame();
+        inputLocked = false;
+        return;
+    }
+
+    let x;
+    if (e.touches) {
+        x = e.touches[0].clientX;
+    } else {
+        x = e.clientX;
+    }
+
+    if (x < window.innerWidth / 2) {
+        chop("left");
+    } else {
+        chop("right");
+    }
+
+    setTimeout(() => {
+        inputLocked = false;
+    }, 150);
+}
+
+canvas.addEventListener("mousedown", handleInput);
+canvas.addEventListener("touchstart", handleInput, { passive: false });
+
+// زر الغش
+document.getElementById("cheatBtn").addEventListener("click", () => {
+    let pass = prompt("Enter password:");
+    if (pass === "1712") {
+        cheatMode = true;
+        alert("Cheat Mode Activated! You will never lose.");
+    } else {
+        alert("Wrong password!");
+    }
+});
+
+startGame();
+gameLoop();
+</script>
+
+</body>
+</html>
