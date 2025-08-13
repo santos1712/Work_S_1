@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هل تحبني؟</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .teddy-img {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .teddy-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        h1 {
+            color: #d6336c;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .buttons-container {
+            position: relative;
+            height: 100px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #yesBtn, #noBtn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 0 10px;
+        }
+        
+        #yesBtn {
+            background: linear-gradient(to right, #4caf50, #2e7d32);
+            color: white;
+            z-index: 10;
+            position: relative;
+        }
+        
+        #noBtn {
+            background: linear-gradient(to right, #f44336, #c62828);
+            color: white;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        
+        #yesBtn:hover, #yesBtn:active {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .result-container {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .result-text {
+            color: #d6336c;
+            font-size: 2rem;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+        
+        .teddy-hug {
+            width: 300px;
+            height: 250px;
+            margin: 20px auto;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .teddy-hug img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .heart-loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+        
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .heart-fall {
+            position: absolute;
+            top: -50px;
+            font-size: 1.5rem;
+            animation: fall 5s linear forwards;
+            color: #ff6b6b;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes fall {
+            to { top: 100vh; opacity: 0; }
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 2rem;
+            color: #ff6b6b;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0); }
+            25% { transform: translate(50px, -50px) rotate(20deg); }
+            50% { transform: translate(0, -100px) rotate(0); }
+            75% { transform: translate(-50px, -50px) rotate(-20deg); }
+            100% { transform: translate(0, 0) rotate(0); }
+        }
+        
+        .floating-heart:nth-child(1) { top: 10%; left: 5%; }
+        .floating-heart:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+        .floating-heart:nth-child(3) { top: 50%; left: 10%; animation-delay: 2s; }
+        .floating-heart:nth-child(4) { bottom: 20%; right: 5%; animation-delay: 3s; }
+        .floating-heart:nth-child(5) { bottom: 10%; left: 20%; animation-delay: 4s; }
+        
+        .restart-btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            background: linear-gradient(to right, #2196F3, #0d47a1);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .teddy-img {
+                width: 170px;
+                height: 170px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .result-text {
+                font-size: 1.7rem;
+            }
+            
+            #yesBtn, #noBtn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                margin: 5px;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .teddy-hug {
+                width: 250px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts in the background -->
+    <div class="hearts">
+        <div class="floating-heart">❤️</div>
+        <div class="floating-heart">❤️</div>
+        <div class="floating-heart">❤️</div>
+        <div class="floating-heart">❤️</div>
+        <div class="floating-heart">❤️</div>
+    </div>
+    
+    <div class="container">
+        <div id="questionContainer">
+            <div class="teddy-img">
+                <img src="https://media0.giphy.com/media/v1.Y2lkPTZjMDliOTUydWxoaXc5bWl4czc5eTh6eDZ1cTZ6NmZ2YjYzcHZkazB0bWR0OTM3biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tXL4FHPSnVJ0A/giphy.gif" alt="دبدوب ينتظر">
+            </div>
+            <h1>هل تحبني؟</h1>
+            <div class="buttons-container">
+                <button id="yesBtn">نعم</button>
+                <button id="noBtn">لا</button>
+            </div>
+        </div>
+        
+        <div class="heart-loader" id="heartLoader">
+            <div style="font-size: 5rem; animation: heartbeat 1.2s infinite;">❤️</div>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <h2 class="result-text">أنا أصلاً عارف إنك بتحبني ❤️</h2>
+            <div class="teddy-hug">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG85cDJvZzZtNnJ1ZzJndzV3eWJjY3F1cWk2d2F1dGJvM3k3bXU3dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26tP3M3i03hoIYL6M/giphy.gif" alt="دبدوبان متعانقان">
+            </div>
+            <button id="restartBtn" class="restart-btn">حاول تاني</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            const heartLoader = document.getElementById('heartLoader');
+            const resultContainer = document.getElementById('resultContainer');
+            const questionContainer = document.getElementById('questionContainer');
+            const restartBtn = document.getElementById('restartBtn');
+            const buttonsContainer = document.querySelector('.buttons-container');
+            
+            // Create falling hearts
+            function createFallingHearts() {
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const heart = document.createElement('div');
+                        heart.classList.add('heart-fall');
+                        heart.innerHTML = '❤️';
+                        heart.style.left = Math.random() * 100 + 'vw';
+                        heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                        document.querySelector('.hearts').appendChild(heart);
+                        
+                        // Remove heart after animation
+                        setTimeout(() => {
+                            heart.remove();
+                        }, 5000);
+                    }, i * 300);
+                }
+            }
+            
+            // Run away button functionality for mouse and touch
+            function moveNoButton() {
+                const containerWidth = buttonsContainer.offsetWidth;
+                const containerHeight = buttonsContainer.offsetHeight;
+                const btnWidth = noBtn.offsetWidth;
+                const btnHeight = noBtn.offsetHeight;
+                
+                const maxX = containerWidth - btnWidth;
+                const maxY = containerHeight - btnHeight;
+                
+                const newX = Math.floor(Math.random() * maxX);
+                const newY = Math.floor(Math.random() * maxY);
+                
+                noBtn.style.position = 'absolute';
+                noBtn.style.left = `${newX}px`;
+                noBtn.style.top = `${newY}px`;
+            }
+            
+            // Add event listeners for both mouse and touch
+            noBtn.addEventListener('mouseover', moveNoButton);
+            noBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                moveNoButton();
+            });
+            
+            // Yes button functionality
+            yesBtn.addEventListener('click', function() {
+                // Add animation effect
+                this.style.transform = 'scale(0.95)';
+                
+                setTimeout(() => {
+                    questionContainer.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        questionContainer.style.display = 'none';
+                        heartLoader.style.display = 'block';
+                        
+                        // Create falling hearts during loading
+                        createFallingHearts();
+                        
+                        setTimeout(() => {
+                            heartLoader.style.display = 'none';
+                            resultContainer.style.display = 'block';
+                            
+                            // Create more hearts for celebration
+                            for (let i = 0; i < 20; i++) {
+                                setTimeout(() => {
+                                    createFallingHearts();
+                                }, i * 200);
+                            }
+                        }, 3000);
+                    }, 500);
+                }, 200);
+            });
+            
+            // Restart functionality
+            restartBtn.addEventListener('click', function() {
+                resultContainer.style.display = 'none';
+                questionContainer.style.display = 'block';
+                
+                setTimeout(() => {
+                    questionContainer.style.opacity = '1';
+                    // Reset no button position
+                    noBtn.style.position = '';
+                    noBtn.style.left = '';
+                    noBtn.style.top = '';
+                }, 50);
+            });
+        });
+    </script>
+</body>
+</html>
