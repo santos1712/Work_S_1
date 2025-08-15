@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عالم الجمال السعودي | وجهتك للتجميل الأصيل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e83e8c;
+            --secondary: #6f42c1;
+            --accent: #ffc107;
+            --dark: #2a0c4e;
+            --light: #fffaf7;
+            --gray: #f5f0f5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        /* أنيميشن الخلفية */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation div {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(232,62,140,0.1) 0%, rgba(111,66,193,0.05) 100%);
+            animation: float 15s infinite linear;
+        }
+        
+        .bg-animation div:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-duration: 20s;
+        }
+        
+        .bg-animation div:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            left: 80%;
+            animation-duration: 15s;
+        }
+        
+        .bg-animation div:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            top: 30%;
+            left: 70%;
+            animation-duration: 25s;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, 30px) rotate(90deg); }
+            50% { transform: translate(0, 60px) rotate(180deg); }
+            75% { transform: translate(-20px, 30px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(111, 66, 193, 0.3);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            color: white;
+            font-size: 1.8rem;
+            margin-left: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--accent);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 15px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        /* قسم الهيرو */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+        .hero-text {
+            flex: 1;
+            padding-right: 40px;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero-text h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            color: var(--secondary);
+        }
+        
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            color: var(--dark);
+        }
+        
+        .hero-image {
+            flex: 1;
+            position: relative;
+            animation: floatImage 8s infinite ease-in-out;
+        }
+        
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.3;
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 4s infinite;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.5s ease;
+        }
+        
+        .hero-image:hover img {
+            transform: perspective(1000px) rotateY(5deg);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes floatImage {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        
+        /* الأقسام العامة */
+        section {
+            padding: 100px 20px;
+            position: relative;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .section-header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #666;
+        }
+        
+        /* قسم من نحن */
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-content::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: url('https://cdn.pixabay.com/photo/2013/07/12/18/39/flower-154103_1280.png') center/contain no-repeat;
+            opacity: 0.05;
+            transform: rotate(45deg);
+        }
+        
+        .about-content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(232, 62, 140, 0.05);
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(111, 66, 193, 0.1);
+        }
+        
+        .feature i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .feature h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        /* قسم شهادات العملاء */
+        .testimonials {
+            background: url('https://images.unsplash.com/photo-1522338242992-e1a54906a8da?q=80&w=2070&auto=format&fit=crop') center/cover;
+            position: relative;
+            color: white;
+            text-align: center;
+        }
+        
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(42, 12, 78, 0.85);
+        }
+        
+        .testimonials .section-header h2 {
+            color: white;
+        }
+        
+        .testimonials .section-header p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .testimonials-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.5s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+        }
+        
+        .client-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .client-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--accent);
+            margin-left: 20px;
+        }
+        
+        .client-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .client-details h4 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .client-details p {
+            color: var(--accent);
+        }
+        
+        .testimonial-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            font-style: italic;
+            position: relative;
+            padding: 0 20px;
+        }
+        
+        .testimonial-text::before,
+        .testimonial-text::after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--accent);
+            opacity: 0.5;
+            position: absolute;
+        }
+        
+        .testimonial-text::before {
+            top: -15px;
+            left: -5px;
+        }
+        
+        .testimonial-text::after {
+            bottom: -40px;
+            right: -5px;
+            transform: rotate(180deg);
+        }
+        
+        /* قسم التواصل */
+        .contact {
+            background: var(--gray);
+        }
+        
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+        
+        .contact-info {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .contact-info h3 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .contact-info p {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .social-links a {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(111, 66, 193, 0.4);
+        }
+        
+        .social-links a:hover::before {
+            transform: translateY(0);
+        }
+        
+        .social-links a.fb {
+            background: linear-gradient(135deg, #3b5998, #1877f2);
+        }
+        
+        .social-links a.messenger {
+            background: linear-gradient(135deg, #006AFF, #00B2FF);
+        }
+        
+        /* زر التواصل */
+        .messenger-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+        
+        .messenger-btn a {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(45deg, #006AFF, #00B2FF);
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0, 106, 255, 0.4);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        .messenger-btn a:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 106, 255, 0.6);
+        }
+        
+        .messenger-btn i {
+            font-size: 1.8rem;
+            margin-left: 10px;
+        }
+        
+        /* فوتر */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 20px 20px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        /* التجاوبية */
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-text {
+                padding-right: 0;
+                margin-bottom: 50px;
+            }
+            
+            .hero-image {
+                max-width: 80%;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+                font-size: 1.8rem;
+                color: white;
+                cursor: pointer;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-text h2 {
+                font-size: 2.5rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            
+            .contact-container {
+                flex-direction: column;
+            }
+            
+            .social-links a {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- أنيميشن الخلفية -->
+    <div class="bg-animation">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    
+    <!-- الشريط العلوي -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-gem"></i>
+                <h1>عالم الجمال السعودي</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">الرئيسية</a></li>
+                    <li><a href="#about">من نحن</a></li>
+                    <li><a href="#testimonials">آراء العملاء</a></li>
+                    <li><a href="#contact">تواصل معنا</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- قسم الهيرو -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h2>اكتشف عالم الجمال السعودي</h2>
+                <p>ـــــــــــــــــــــــــــــــــــ</p>
+                <p>
+وجهتك المثالية لأجود  منتجات المكياج والعناية بالبشرة في المملكة العربية السعودية. نقدم لكم أحدث المنتجات العالمية بجودة فائقة وخدمة مميزة.</p>
+                <div style="display: flex; gap: 20px; margin-top: 40px;">
+                    <a href="#about" class="btn" style="display: inline-block; background: linear-gradient(to right, var(--primary), var(--secondary)); color: white; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; box-shadow: 0 10px 25px rgba(111, 66, 193, 0.4);">تعرف علينا</a>
+                    <a href="#contact" class="btn" style="display: inline-block; background: transparent; border: 2px solid var(--secondary); color: var(--secondary); padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease;">تواصل معنا</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=1780&auto=format&fit=crop" alt="منتجات تجميل">
+            </div>
+        </div>
+    </section>
+    
+    <!-- قسم من نحن -->
+    <section id="about">
+        <div class="section-header">
+            <h2>من نحن</h2>
+            <p>اكتشف قصة عالم الجمال السعودي ورسالتنا في تقديم الأفضل لكم</p>
+        </div>
+        <div class="about-content">
+            <p>
+                تأسس "عالم الجمال السعودي" عام 2025 ليكون وجهة سعودية رائدة في عالم مستحضرات التجميل والعناية بالبشرة. نلتزم بتقديم منتجات عالية الجودة تلبي أحدث صيحات الموضة العالمية، مع الحفاظ على أصالة وجمال المرأة السعودية.
+            </p>
+            <p>
+                نسعى جاهدين لتقديم تجربة تسوق فريدة لعملائنا الكرام، مع التركيز على الجودة والتميز والابتكار. فريقنا المختص يعمل باستمرار لاختيار أفضل المنتجات العالمية التي تناسب احتياجات وأذواق عملائنا.
+            </p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-truck"></i>
+                    <h3>توصيل سريع</h3>
+                    <p>نضمن وصول طلباتكم خلال 24-48 ساعة في المدن الرئيسية</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-star"></i>
+                    <h3>جودة مضمونة</h3>
+                    <p>جميع منتجاتنا أصلية وذات جودة عالية</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-headset"></i>
+                    <h3>دعم فني</h3>
+                    <p>فريق دعم متاح لتقديم النصائح والاستشارات</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- قسم شهادات العملاء -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-header">
+            <h2>آراء عملائنا</h2>
+            <p>انطباعات عملائنا عن تجاربهم مع عالم الجمال السعودي</p>
+        </div>
+        <div class="testimonials-container">
+            <div class="testimonial-card">
+                <div class="client-info">
+                    <div class="client-image">
+                        <img src="https://images.unsplash.com/photo-1603366445787-09714680cbf1?q=80&w=1974&auto=format&fit=crop" alt="عميلة">
+                    </div>
+                    <div class="client-details">
+                        <h4>نورة السعدي</h4>
+                        <p>الرياض</p>
+                    </div>
+                </div>
+                <div class="testimonial-text">
+                    تجربتي مع عالم الجمال السعودي كانت ممتازة! المنتجات أصلية وجودتها عالية، والتوصيل كان سريعًا. فريق الدعم كان محترفًا وساعدني في اختيار المنتجات المناسبة لبشرتي. بالتأكيد سأكون من العملاء الدائمين
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="client-info">
+                    <div class="client-image">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop" alt="عميلة">
+                    </div>
+                    <div class="client-details">
+                        <h4>لمى الفهد</h4>
+                        <p>جدة</p>
+                    </div>
+                </div>
+                <div class="testimonial-text">
+                    سعيدة جدًا بخدمة عالم الجمال السعودي. المنتجات وصلت بسرعة فائقة وبالتغليف الأنيق. النصائح التي قدمها الفريق كانت مفيدة جدًا وساعدتني في اختيار الألوان المناسبة لي. شكرًا لكم على هذه التجربة الرائعة!
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="client-info">
+                    <div class="client-image">
+                        <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=2070&auto=format&fit=crop" alt="عميلة">
+                    </div>
+                    <div class="client-details">
+                        <h4>سارة القحطاني</h4>
+                        <p>الدمام</p>
+                    </div>
+                </div>
+                <div class="testimonial-text">
+                    كعميلة دائمة لعالم الجمال السعودي، أؤكد أنهم الأفضل في السوق. جودة المنتجات لا تضاهى، والأسعار تنافسية. فريق العمل دائمًا متاح للإجابة على استفساراتي وتقديم النصائح. أنصح كل صديقاتي بالتسوق من عندهم
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- قسم التواصل -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <h2>تواصل معنا</h2>
+            <p>نحن هنا للإجابة على جميع استفساراتك وتلبية احتياجاتك</p>
+        </div>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>تابعنا على وسائل التواصل</h3>
+                <p>تواصل معنا عبر منصات التواصل الاجتماعي لمعرفة أحدث العروض والمنتجات</p>
+                
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/15sihzYAAk/" target="_blank" class="fb">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://m.me/61579414979743" target="_blank" class="messenger">
+                        <i class="fab fa-facebook-messenger"></i>
+                    </a>
+                </div>
+                
+                <div style="margin-top: 40px; background: rgba(232, 62, 140, 0.05); padding: 20px; border-radius: 15px;">
+                    <i class="fas fa-info-circle" style="font-size: 1.5rem; color: var(--secondary); margin-bottom: 15px;"></i>
+                    <h3 style="color: var(--secondary);">ساعات العمل</h3>
+                    <p style="margin-top: 10px;">السبت - الخميس: ٩ صباحًا - ١٠ مساءً</p>
+                    <p>الجمعة: ٤ مساءً - ١٠ مساءً</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- زر التواصل -->
+    <div class="messenger-btn">
+        <a href="https://m.me/61579414979743" target="_blank">
+            <span>تواصل معنا عبر Messenger</span>
+            <i class="fab fa-facebook-messenger"></i>
+        </a>
+    </div>
+    
+    <!-- الفوتر -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>عالم الجمال السعودي</h3>
+                <p>وجهتك الأولى لأفضل منتجات التجميل والعناية بالبشرة في السعودية. جودة عالمية وخدمة مميزة.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>روابط سريعة</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">الرئيسية</a></li>
+                    <li><a href="#about">من نحن</a></li>
+                    <li><a href="#testimonials">آراء العملاء</a></li>
+                    <li><a href="#contact">اتصل بنا</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 عالم الجمال السعودي. جميع الحقوق محفوظة.
+        </div>
+    </footer>
+    
+    <script>
+        // تنشيط قسم الأسئلة الشائعة
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentNode;
+                item.classList.toggle('active');
+            });
+        });
+        
+        // تأثير التمرير السلس
+        document.querySelectorAll('nav ul li a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // تأثير ظهور العناصر عند التمرير
+        const observerOptions = {
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.testimonial-card').forEach(item => {
+            item.style.opacity = 0;
+            item.style.transform = 'translateY(30px)';
+            item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
