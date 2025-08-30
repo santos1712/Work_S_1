@@ -20,6 +20,7 @@
       --transition: all 0.3s ease;
       --whatsapp-light-green: #dcf8c6;
       --whatsapp-light-blue: #e9edef;
+      --sidebar-width: 70px;
     }
     
     .dark {
@@ -49,10 +50,107 @@
       overflow-x: hidden;
     }
     
+    .app-container {
+      display: flex;
+      height: 100%;
+    }
+    
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--panel);
+      border-left: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      overflow-y: auto;
+      transition: width 0.3s ease;
+    }
+    
+    .sidebar:hover {
+      width: 250px;
+    }
+    
+    .sidebar-chat {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .sidebar:hover .sidebar-chat {
+      width: 100%;
+      height: 50px;
+      border-radius: 12px;
+      justify-content: flex-start;
+      padding: 0 12px;
+    }
+    
+    .sidebar-chat.active {
+      box-shadow: 0 0 0 2px var(--brand);
+    }
+    
+    .sidebar-chat-close {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      background: #f56565;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .sidebar-chat:hover .sidebar-chat-close {
+      opacity: 1;
+    }
+    
+    .sidebar-add {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(37,211,102,.2);
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 24px;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar:hover .sidebar-add {
+      width: 100%;
+      border-radius: 12px;
+    }
+    
+    .sidebar-add:hover {
+      background: var(--brand);
+      color: white;
+    }
+    
     .container {
-      max-width: 980px;
+      flex: 1;
+      max-width: calc(980px - var(--sidebar-width));
       margin: 0 auto;
       padding: 12px;
+      transition: max-width 0.3s ease;
     }
     
     header {
@@ -466,8 +564,71 @@
       border-radius: 4px;
     }
     
+    .chat-name {
+      font-weight: bold;
+      margin-left: 8px;
+      display: none;
+    }
+    
+    .sidebar:hover .chat-name {
+      display: inline;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 8px;
+        border-left: none;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        overflow-x: auto;
+      }
+      
+      .sidebar:hover {
+        width: 100%;
+        height: auto;
+      }
+      
+      .sidebar-chat {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+      }
+      
+      .sidebar:hover .sidebar-chat {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        justify-content: center;
+        padding: 0;
+      }
+      
+      .sidebar-add {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+      }
+      
+      .sidebar:hover .sidebar-add {
+        width: 40px;
+        border-radius: 50%;
+      }
+      
+      .chat-name {
+        display: none !important;
+      }
+      
+      .container {
+        max-width: 100%;
+        padding: 8px;
+      }
+      
       header {
         flex-direction: column;
         align-items: stretch;
@@ -500,53 +661,60 @@
   <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="left row">
-        <label class="file-label" for="txtFile">📁 اختر ملف محادثة WhatsApp (.txt)</label>
-        <input id="txtFile" type="file" accept=".txt" />
-        <button id="exampleBtn" class="btn tonal">🔄 ملف تجريبي</button>
-      </div>
-      <div class="right row">
-        <div class="search-container">
-          <input id="search" placeholder="🔍 ابحث في الرسائل..." />
-          <div class="search-nav" id="searchNav" style="display: none;">
-            <button class="search-nav-btn" id="prevResult" disabled>⬆️</button>
-            <button class="search-nav-btn" id="nextResult" disabled>⬇️</button>
+  <div class="app-container">
+    <div class="sidebar" id="sidebar">
+      <!-- سيتم إضافة المحادثات هنا ديناميكيًا -->
+      <div class="sidebar-add" id="addChatBtn">+</div>
+    </div>
+
+    <div class="container">
+      <header>
+        <div class="left row">
+          <label class="file-label" for="txtFile">📁 اختر ملف محادثة WhatsApp (.txt)</label>
+          <input id="txtFile" type="file" accept=".txt" />
+          <button id="exampleBtn" class="btn tonal">🔄 ملف تجريبي</button>
+        </div>
+        <div class="right row">
+          <div class="search-container">
+            <input id="search" placeholder="🔍 ابحث في الرسائل..." />
+            <div class="search-nav" id="searchNav" style="display: none;">
+              <button class="search-nav-btn" id="prevResult" disabled>⬆️</button>
+              <button class="search-nav-btn" id="nextResult" disabled>⬇️</button>
+            </div>
           </div>
+          <button id="toggleTheme" class="btn secondary">🌙 وضع داكن</button>
+          <button id="exportMenu" class="btn">💾 تصدير</button>
         </div>
-        <button id="toggleTheme" class="btn secondary">🌙 وضع داكن</button>
-        <button id="exportMenu" class="btn">💾 تصدير</button>
-      </div>
-    </header>
+      </header>
 
-    <section class="panel stats" id="statsPanel">
-      <div class="row" style="justify-content:space-between">
-        <div class="row">
-          <strong>المشاركون: </strong>
-          <select id="meSelect" class="select"></select>
+      <section class="panel stats" id="statsPanel">
+        <div class="row" style="justify-content:space-between">
+          <div class="row">
+            <strong>المشاركون: </strong>
+            <select id="meSelect" class="select"></select>
+          </div>
+          <div class="row muted" id="meta"></div>
         </div>
-        <div class="row muted" id="meta"></div>
-      </div>
-      <div class="stats-grid" id="statsGrid"></div>
-      <div class="export-options" id="exportOptions" style="display: none;">
-        <button id="exportPdf" class="btn secondary">📄 PDF</button>
-        <button id="exportTxt" class="btn secondary">📝 نصي</button>
-        <button id="exportJson" class="btn secondary">🔷 JSON</button>
-      </div>
-    </section>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="export-options" id="exportOptions" style="display: none;">
+          <button id="exportPdf" class="btn secondary">📄 PDF</button>
+          <button id="exportTxt" class="btn secondary">📝 نصي</button>
+          <button id="exportJson" class="btn secondary">🔷 JSON</button>
+        </div>
+      </section>
 
-    <section class="chat-wrap">
-      <div id="chat" class="chat panel" aria-live="polite"></div>
-    </section>
+      <section class="chat-wrap">
+        <div id="chat" class="chat panel" aria-live="polite"></div>
+      </section>
 
-    <div class="footer-actions">
-      <small class="muted">كل شيء يعمل محليًا داخل المتصفح. لا يتم رفع أي بيانات.</small>
-      <div class="developer-info">
-        <span>تم التصميم بواسطة <strong>Marwan Santos</strong></span>
-        <a href="https://www.instagram.com/santos_x1x/" target="_blank">
-          📱 التواصل عبر الإنستجرام
-        </a>
+      <div class="footer-actions">
+        <small class="muted">كل شيء يعمل محليًا داخل المتصفح. لا يتم رفع أي بيانات.</small>
+        <div class="developer-info">
+          <span>تم التصميم بواسطة <strong>Marwan Santos</strong></span>
+          <a href="https://www.instagram.com/santos_x1x/" target="_blank">
+            📱 التواصل عبر الإنستجرام
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -618,7 +786,7 @@ function parseDate(date, time) {
   return new Date(year, m-1, d, hh, mm);
 }
 
-function parseWhatsAppText(raw) {
+function parseWhatsAppText(raw, fileName = '') {
   const lines = raw.split('\n');
   const messages = []; 
   const participants = new Set(); 
@@ -645,12 +813,22 @@ function parseWhatsAppText(raw) {
       current.text += '\n' + line; 
     }
   }
-  return { messages, participants: [...participants] };
+  
+  // إنشاء اسم للمحادثة إذا لم يكن موجودًا
+  const chatName = fileName || `محادثة ${new Date().toLocaleTimeString('ar-EG')}`;
+  
+  return { 
+    messages, 
+    participants: [...participants],
+    name: chatName,
+    id: Date.now().toString() + Math.random().toString(36).substr(2, 5)
+  };
 }
 
 // ===== State
 let state = { 
-  chat: null, 
+  chats: [], // جميع المحادثات
+  activeChatId: null, // المحادثة النشطة حاليًا
   me: null, 
   query: '', 
   searchResults: [], 
@@ -678,6 +856,14 @@ const exportOptions = document.getElementById('exportOptions');
 const exportPdf = document.getElementById('exportPdf');
 const exportTxt = document.getElementById('exportTxt');
 const exportJson = document.getElementById('exportJson');
+const sidebar = document.getElementById('sidebar');
+const addChatBtn = document.getElementById('addChatBtn');
+const fileInput = document.getElementById('txtFile');
+
+// الحصول على المحادثة النشطة
+function getActiveChat() {
+  return state.chats.find(chat => chat.id === state.activeChatId);
+}
 
 // ===== Render (Optimized)
 let renderTimeout = null;
@@ -697,7 +883,8 @@ function groupByDay(msgs) {
 }
 
 function render() {
-  const msgs = state.chat?.messages || [];
+  const activeChat = getActiveChat();
+  const msgs = activeChat?.messages || [];
   const filtered = state.query ? msgs.filter(m => m.text.toLowerCase().includes(state.query.toLowerCase())) : msgs;
   const byDay = groupByDay(filtered);
   
@@ -769,6 +956,7 @@ function render() {
   chatEl.appendChild(fragment);
   
   renderStats();
+  renderSidebar();
 }
 
 function escapeHtml(s) { 
@@ -794,7 +982,8 @@ function highlightMessage(index) {
 }
 
 function renderStats() {
-  const msgs = state.chat?.messages || [];
+  const activeChat = getActiveChat();
+  const msgs = activeChat?.messages || [];
   const total = msgs.length;
   const media = msgs.filter(m => m.isMedia).length;
   const words = msgs.reduce((a, m) => a + (m.text.split(/\s+/).length), 0);
@@ -847,19 +1036,103 @@ function renderStats() {
   }
 }
 
+// عرض الشريط الجانبي مع المحادثات
+function renderSidebar() {
+  // مسح المحادثات الحالية في الشريط الجانبي
+  const chats = sidebar.querySelectorAll('.sidebar-chat');
+  chats.forEach(chat => chat.remove());
+  
+  // إضافة المحادثات إلى الشريط الجانبي
+  state.chats.forEach(chat => {
+    const chatEl = document.createElement('div');
+    chatEl.className = `sidebar-chat ${chat.id === state.activeChatId ? 'active' : ''}`;
+    chatEl.setAttribute('data-chat-id', chat.id);
+    
+    // الحرف الأول من اسم المحادثة
+    const firstChar = chat.name.charAt(0);
+    
+    chatEl.innerHTML = `
+      <span class="sidebar-chat-close">×</span>
+      ${firstChar}
+      <span class="chat-name">${chat.name}</span>
+    `;
+    
+    // حدث النقر لتبديل المحادثة
+    chatEl.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('sidebar-chat-close')) {
+        switchChat(chat.id);
+      }
+    });
+    
+    // حدث إغلاق المحادثة
+    const closeBtn = chatEl.querySelector('.sidebar-chat-close');
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeChat(chat.id);
+    });
+    
+    sidebar.insertBefore(chatEl, addChatBtn);
+  });
+}
+
+// تبديل المحادثة النشطة
+function switchChat(chatId) {
+  state.activeChatId = chatId;
+  const activeChat = getActiveChat();
+  
+  // تحديث قائمة المشاركين
+  meSelect.innerHTML = '';
+  if (activeChat) {
+    for (const p of activeChat.participants) {
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = p;
+      meSelect.appendChild(opt);
+    }
+    
+    state.me = activeChat.participants[0] || null;
+  }
+  
+  debouncedRender();
+}
+
+// إغلاق محادثة
+function closeChat(chatId) {
+  state.chats = state.chats.filter(chat => chat.id !== chatId);
+  
+  // إذا كانت المحادثة النشطة هي التي تم إغلاقها
+  if (state.activeChatId === chatId) {
+    state.activeChatId = state.chats.length > 0 ? state.chats[0].id : null;
+    
+    if (state.activeChatId) {
+      switchChat(state.activeChatId);
+    } else {
+      // لا توجد محادثات مفتوحة
+      chatEl.innerHTML = '';
+      statsGrid.innerHTML = '';
+      metaEl.innerHTML = '';
+      meSelect.innerHTML = '';
+    }
+  }
+  
+  renderSidebar();
+}
+
 // ===== Edit Message Functionality =====
 function openEditModal(messageIndex) {
-  if (!state.chat || !state.chat.messages[messageIndex]) return;
+  const activeChat = getActiveChat();
+  if (!activeChat || !activeChat.messages[messageIndex]) return;
   
   state.editingMessage = messageIndex;
-  editTextarea.value = state.chat.messages[messageIndex].text;
+  editTextarea.value = activeChat.messages[messageIndex].text;
   editModal.style.display = 'block';
 }
 
 function saveEditedMessage() {
-  if (state.editingMessage === null || !state.chat) return;
+  const activeChat = getActiveChat();
+  if (state.editingMessage === null || !activeChat) return;
   
-  state.chat.messages[state.editingMessage].text = editTextarea.value;
+  activeChat.messages[state.editingMessage].text = editTextarea.value;
   debouncedRender();
   closeEditModal();
 }
@@ -870,7 +1143,7 @@ function closeEditModal() {
 }
 
 // ===== File Handling =====
-document.getElementById('txtFile').addEventListener('change', async e => {
+fileInput.addEventListener('change', async e => {
   const f = e.target.files[0];
   if (!f) return;
   
@@ -882,12 +1155,13 @@ document.getElementById('txtFile').addEventListener('change', async e => {
   setTimeout(async () => {
     try {
       const text = await readFileWithProgress(f);
-      loadRaw(text);
+      loadRaw(text, f.name);
     } catch (error) {
       console.error('Error reading file:', error);
       alert('حدث خطأ أثناء قراءة الملف. يرجى المحاولة مرة أخرى.');
     } finally {
       loaderOverlay.style.display = 'none';
+      fileInput.value = ''; // Reset file input
     }
   }, 100);
 });
@@ -923,10 +1197,10 @@ document.getElementById('exampleBtn').addEventListener('click', () => {
 24/6/22, 4:42 am - M Santos: ايوه
 24/6/22, 4:42 am - M Santos: عجبني
 24/6/22, 4:43 am - ad: <Media omitted>
-24/6/22, 4:44 am - M Santos: هذا رسالة طويلة جدًا لتجربة كيف يبدو الأمر عندما تكون الرسالة طويلة وتحتوي على الكثير من النص الذي قد يمتد لعدة أسطر في المحادثة`);
+24/6/22, 4:44 am - M Santos: هذا رسالة طويلة جدًا لتجربة كيف يبدو الأمر عندما تكون الرسالة طويلة وتحتوي على الكثير من النص الذي قد يمتد لعدة أسطر في المحادثة`, 'محادثة تجريبية');
 });
 
-function loadRaw(raw) {
+function loadRaw(raw, fileName = '') {
   // Show processing message for large files
   if (raw.length > 100000) {
     loadingText.textContent = 'جاري معالجة المحادثة... قد يستغرق ذلك بضع ثوانٍ';
@@ -934,18 +1208,15 @@ function loadRaw(raw) {
   
   // Process in chunks to avoid blocking the UI
   setTimeout(() => {
-    state.chat = parseWhatsAppText(raw);
-    meSelect.innerHTML = '';
+    const newChat = parseWhatsAppText(raw, fileName);
+    state.chats.push(newChat);
     
-    for (const p of state.chat.participants) {
-      const opt = document.createElement('option');
-      opt.value = p;
-      opt.textContent = p;
-      meSelect.appendChild(opt);
+    // إذا كانت هذه أول محادثة، اجعلها نشطة
+    if (state.chats.length === 1) {
+      state.activeChatId = newChat.id;
     }
     
-    state.me = state.chat.participants[0] || null;
-    debouncedRender();
+    switchChat(newChat.id);
     loaderOverlay.style.display = 'none';
   }, 50);
 }
@@ -998,7 +1269,8 @@ exportMenu.addEventListener('click', () => {
 
 // Export functions
 exportPdf.addEventListener('click', async () => {
-  if (!state.chat || state.chat.messages.length === 0) {
+  const activeChat = getActiveChat();
+  if (!activeChat || activeChat.messages.length === 0) {
     alert('يرجى تحميل محادثة أولاً');
     return;
   }
@@ -1041,7 +1313,7 @@ exportPdf.addEventListener('click', async () => {
         }
       }
       
-      pdf.save('whatsapp_chat.pdf');
+      pdf.save(`whatsapp_chat_${activeChat.name}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('حدث خطأ أثناء إنشاء ملف PDF');
@@ -1053,13 +1325,14 @@ exportPdf.addEventListener('click', async () => {
 });
 
 exportTxt.addEventListener('click', () => {
-  if (!state.chat || state.chat.messages.length === 0) {
+  const activeChat = getActiveChat();
+  if (!activeChat || activeChat.messages.length === 0) {
     alert('يرجى تحميل محادثة أولاً');
     return;
   }
   
   let text = '';
-  state.chat.messages.forEach(msg => {
+  activeChat.messages.forEach(msg => {
     text += `${msg.timestamp.toLocaleString('ar-EG')} - ${msg.sender}: ${msg.text}\n`;
   });
   
@@ -1067,21 +1340,22 @@ exportTxt.addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'whatsapp_chat.txt';
+  a.download = `whatsapp_chat_${activeChat.name}.txt`;
   a.click();
   URL.revokeObjectURL(url);
   exportOptions.style.display = 'none';
 });
 
 exportJson.addEventListener('click', () => {
-  if (!state.chat || state.chat.messages.length === 0) {
+  const activeChat = getActiveChat();
+  if (!activeChat || activeChat.messages.length === 0) {
     alert('يرجى تحميل محادثة أولاً');
     return;
   }
   
   const data = {
-    participants: state.chat.participants,
-    messages: state.chat.messages.map(msg => ({
+    participants: activeChat.participants,
+    messages: activeChat.messages.map(msg => ({
       timestamp: msg.timestamp.toISOString(),
       sender: msg.sender,
       text: msg.text,
@@ -1094,10 +1368,15 @@ exportJson.addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'whatsapp_chat.json';
+  a.download = `whatsapp_chat_${activeChat.name}.json`;
   a.click();
   URL.revokeObjectURL(url);
   exportOptions.style.display = 'none';
+});
+
+// إضافة محادثة جديدة عند النقر على زر الإضافة
+addChatBtn.addEventListener('click', () => {
+  fileInput.click();
 });
 
 // ===== Theme Toggle =====
@@ -1131,6 +1410,37 @@ chatEl.addEventListener('scroll', function() {
     });
   }, 100);
 }, false);
+
+// تحميل المحادثات المحفوظة من localStorage إذا وجدت
+function loadSavedChats() {
+  const savedChats = localStorage.getItem('whatsappChats');
+  if (savedChats) {
+    try {
+      state.chats = JSON.parse(savedChats);
+      if (state.chats.length > 0) {
+        state.activeChatId = state.chats[0].id;
+        switchChat(state.activeChatId);
+      }
+    } catch (e) {
+      console.error('Error loading saved chats:', e);
+    }
+  }
+}
+
+// حفظ المحادثات في localStorage
+function saveChats() {
+  localStorage.setItem('whatsappChats', JSON.stringify(state.chats));
+}
+
+// حفظ المحادثات عند مغادرة الصفحة
+window.addEventListener('beforeunload', () => {
+  saveChats();
+});
+
+// تحميل المحادثات المحفوظة عند بدء التحميل
+window.addEventListener('load', () => {
+  loadSavedChats();
+});
 </script>
 </body>
 </html>
