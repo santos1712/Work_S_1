@@ -1,0 +1,96 @@
+here<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>عارض محادثات واتساب - Marwan Santos</title>
+  <meta name="theme-color" content="#25D366" />
+  <!-- إضافة خط عربي محسن -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- ربط ملف CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="sidebar" id="sidebar">
+      <!-- سيتم إضافة المحادثات هنا ديناميكيًا -->
+      <div class="sidebar-add" id="addChatBtn">+</div>
+    </div>
+
+    <div class="container">
+      <header>
+        <div class="header-top">
+          <label class="file-label" for="txtFile">📁 اختر ملف</label>
+          <input id="txtFile" type="file" accept=".txt" />
+          <button id="exampleBtn" class="btn tonal">🔄 تجريبي</button>
+        </div>
+        <div class="header-bottom">
+          <div class="search-container">
+            <input id="search" placeholder="🔍 ابحث في الرسائل..." />
+            <div class="search-nav" id="searchNav" style="display: none;">
+              <button class="search-nav-btn" id="prevResult" disabled>⬆️</button>
+              <button class="search-nav-btn" id="nextResult" disabled>⬇️</button>
+            </div>
+          </div>
+          <button id="toggleTheme" class="btn secondary">🌙</button>
+          <button id="exportMenu" class="btn">💾</button>
+        </div>
+      </header>
+
+      <section class="panel stats" id="statsPanel">
+        <div style="margin-bottom: 12px;">
+          <strong>المشاركون: </strong>
+          <select id="meSelect" class="select"></select>
+        </div>
+        <div class="muted" id="meta"></div>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="export-options" id="exportOptions" style="display: none;">
+          <button id="exportPdf" class="btn secondary">📄 PDF</button>
+          <button id="exportTxt" class="btn secondary">📝 نصي</button>
+          <button id="exportJson" class="btn secondary">🔷 JSON</button>
+        </div>
+      </section>
+
+      <section class="chat-wrap">
+        <div id="chat" class="chat panel" aria-live="polite"></div>
+      </section>
+
+      <div class="footer-actions">
+        <small class="muted">كل شيء يعمل محليًا داخل المتصفح. لا يتم رفع أي بيانات.</small>
+        <div class="developer-info">
+          <span>تم التصميم بواسطة <strong>Marwan Santos</strong></span>
+          <a href="https://www.instagram.com/santos_x1x/" target="_blank">
+            📱 الإنستجرام
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for editing messages -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>تعديل الرسالة</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <textarea id="editTextarea" class="modal-textarea"></textarea>
+      <div class="modal-actions">
+        <button id="editCancel" class="btn secondary">إلغاء</button>
+        <button id="editSave" class="btn">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader Overlay -->
+  <div class="loader-overlay" id="loaderOverlay" style="display: none;">
+    <div class="loader"></div>
+    <p id="loadingText">جاري قراءة الملف وتحليله...</p>
+  </div>
+
+  <!-- ربط ملفات JS -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+    </html>
