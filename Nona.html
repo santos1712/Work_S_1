@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>في الظلام - عالم الرعب</title>
+    <style>
+        /* الأساسيات */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        /* تأثيرات الإضاءة في الخلفية */
+        .light {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,0,0,0.3) 0%, rgba(139,0,0,0) 70%);
+            filter: blur(20px);
+            z-index: -1;
+            opacity: 0;
+            animation: lightFlicker 8s infinite;
+        }
+        
+        .light-1 {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        
+        .light-2 {
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .light-3 {
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+        
+        .light-4 {
+            top: 30%;
+            right: 20%;
+            animation-delay: 6s;
+        }
+        
+        @keyframes lightFlicker {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            25% { opacity: 0.3; transform: scale(1.1); }
+            50% { opacity: 0.1; transform: scale(0.9); }
+            75% { opacity: 0.4; transform: scale(1.05); }
+        }
+        
+        /* الأنيميشن الأساسي للخلفية */
+        @keyframes backgroundPulse {
+            0% { background-color: #0a0a0a; }
+            50% { background-color: #111111; }
+            100% { background-color: #0a0a0a; }
+        }
+        
+        body {
+            animation: backgroundPulse 10s infinite;
+        }
+        
+        /* تأثيرات الحواف */
+        .edge-effect {
+            position: fixed;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .edge-top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, transparent, #8b0000, transparent);
+            box-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000;
+            animation: edgeGlow 4s infinite alternate;
+        }
+        
+        .edge-bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, transparent, #8b0000, transparent);
+            box-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000;
+            animation: edgeGlow 4s infinite alternate-reverse;
+        }
+        
+        .edge-left {
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #8b0000, transparent);
+            box-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000;
+            animation: edgeGlowVertical 5s infinite alternate;
+        }
+        
+        .edge-right {
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #8b0000, transparent);
+            box-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000;
+            animation: edgeGlowVertical 5s infinite alternate-reverse;
+        }
+        
+        @keyframes edgeGlow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+        
+        @keyframes edgeGlowVertical {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.7; }
+        }
+        
+        /* الرأس */
+        header {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            padding: 2rem 0;
+            position: relative;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #8b0000;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000;
+            margin-bottom: 1rem;
+            animation: flicker 3s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+            padding: 0 1rem;
+            min-height: 60px;
+        }
+        
+        /* تأثير الكتابة - سطر واحد */
+        .typing-container {
+            max-width: 90%;
+            margin: 0 auto;
+        }
+        
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 auto;
+            text-align: center;
+            border-right: 2px solid #8b0000;
+            animation: typing 4s steps(50, end), blink-caret 0.75s step-end infinite;
+            width: 0;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #8b0000 }
+        }
+        
+        /* المحتوى الرئيسي */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        section {
+            padding: 4rem 0;
+            border-bottom: 1px solid #333;
+            position: relative;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            color: #8b0000;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+            animation: fadeIn 2s ease-in;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #444;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .feature-card:nth-child(1) { animation-delay: 0.2s; }
+        .feature-card:nth-child(2) { animation-delay: 0.4s; }
+        .feature-card:nth-child(3) { animation-delay: 0.6s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(139, 0, 0, 0.3);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #8b0000, #ff0000);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #8b0000;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #e0e0e0;
+        }
+        
+        .feature-description {
+            color: #b0b0b0;
+        }
+        
+        /* قسم القواعد */
+        .rules {
+            list-style-type: none;
+            margin: 2rem 0;
+        }
+        
+        .rule-item {
+            background: rgba(40, 40, 40, 0.7);
+            margin-bottom: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #8b0000;
+            animation: slideIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .rule-item:nth-child(1) { animation-delay: 0.2s; }
+        .rule-item:nth-child(2) { animation-delay: 0.4s; }
+        .rule-item:nth-child(3) { animation-delay: 0.6s; }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* زر الانضمام */
+        .cta-section {
+            text-align: center;
+            padding: 5rem 0;
+        }
+        
+        .join-btn {
+            display: inline-block;
+            background: linear-gradient(to right, #8b0000, #b30000);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.4);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            animation: pulse 2s infinite, fadeIn 1s ease-in;
+        }
+        
+        .join-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #b30000, #8b0000);
+            z-index: -1;
+            transition: transform 0.5s;
+            transform: scaleX(0);
+            transform-origin: right;
+        }
+        
+        .join-btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .join-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(139, 0, 0, 0.6);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(139, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 0, 0, 0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* التذييل */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .admin-info {
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        
+        /* تأثيرات إضافية */
+        .floating-ghost {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+            z-index: -1;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, 100px) rotate(90deg); }
+            50% { transform: translate(200px, 0) rotate(180deg); }
+            75% { transform: translate(100px, -100px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        /* تأثير الظلال المتحركة */
+        .moving-shadow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(ellipse at center, rgba(139,0,0,0.2) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            filter: blur(30px);
+            z-index: -1;
+            animation: moveShadow 20s infinite linear;
+        }
+        
+        .shadow-1 {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shadow-2 {
+            bottom: 10%;
+            right: 10%;
+            animation-delay: 10s;
+        }
+        
+        @keyframes moveShadow {
+            0% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, 50px) scale(1.2); }
+            50% { transform: translate(0, 100px) scale(0.8); }
+            75% { transform: translate(-100px, 50px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        
+        /* تأثيرات الدم */
+        .blood-drip {
+            position: fixed;
+            width: 5px;
+            height: 100px;
+            background: linear-gradient(to bottom, #8b0000, transparent);
+            border-radius: 0 0 5px 5px;
+            z-index: -1;
+            animation: drip 10s infinite;
+            opacity: 0.5;
+        }
+        
+        .drip-1 {
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .drip-2 {
+            left: 25%;
+            animation-delay: 3s;
+        }
+        
+        .drip-3 {
+            right: 15%;
+            animation-delay: 6s;
+        }
+        
+        .drip-4 {
+            right: 30%;
+            animation-delay: 9s;
+        }
+        
+        @keyframes drip {
+            0% { height: 0; opacity: 0; }
+            10% { height: 100px; opacity: 0.5; }
+            20% { height: 100px; opacity: 0.5; }
+            30% { height: 0; opacity: 0; }
+            100% { height: 0; opacity: 0; }
+        }
+        
+        /* التكيف مع الشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .join-btn {
+                font-size: 1.2rem;
+                padding: 1rem 2rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+                line-height: 1.7;
+                padding: 0 0.5rem;
+            }
+            
+            .typing-effect {
+                white-space: normal;
+                border-right: none;
+                animation: none;
+                width: 100%;
+            }
+            
+            section {
+                padding: 2.5rem 0;
+            }
+            
+            .cta-section {
+                padding: 3rem 0;
+            }
+            
+            .light {
+                display: none;
+            }
+            
+            .blood-drip {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- تأثيرات الإضاءة -->
+    <div class="light light-1"></div>
+    <div class="light light-2"></div>
+    <div class="light light-3"></div>
+    <div class="light light-4"></div>
+    
+    <!-- تأثيرات الحواف -->
+    <div class="edge-effect edge-top"></div>
+    <div class="edge-effect edge-bottom"></div>
+    <div class="edge-effect edge-left"></div>
+    <div class="edge-effect edge-right"></div>
+    
+    <!-- تأثيرات الظلال المتحركة -->
+    <div class="moving-shadow shadow-1"></div>
+    <div class="moving-shadow shadow-2"></div>
+    
+    <!-- تأثيرات الدم -->
+    <div class="blood-drip drip-1"></div>
+    <div class="blood-drip drip-2"></div>
+    <div class="blood-drip drip-3"></div>
+    <div class="blood-drip drip-4"></div>
+    
+    <!-- أشباح عائمة للخلفية -->
+    <div class="floating-ghost" style="top: 10%; left: 5%;">👻</div>
+    <div class="floating-ghost" style="top: 30%; left: 80%;">💀</div>
+    <div class="floating-ghost" style="top: 70%; left: 15%;">🦇</div>
+    <div class="floating-ghost" style="top: 50%; left: 70%;">🕷️</div>
+    
+    <header>
+        <div class="container">
+            <h1 class="logo">In The Darkness</h1>
+            <div class="typing-container">
+                <p class="tagline typing-effect">يمڪن ان تصبح القراءه لعنه والشغف هلاڪ والفضول مرض فاحذرو!!</p>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section id="about">
+            <h2>عن المجموعة</h2>
+            <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem;">
+                ڪام واحد فينا بيشوف حاجات موجوده وهو بس اللي بيشوفها<br>
+                الروم عباره عن......
+            </p>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h3 class="feature-title">قصص رعب طرش</h3>
+                    <p class="feature-description">أفضل وأخطر قصص الرعب التي ستجعل شعر رأسك يقف!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎬</div>
+                    <h3 class="feature-title">فيديوهات رعب</h3>
+                    <p class="feature-description">مقاطع فيديو مرعبة ستجبرك على إضاءة الأنوار!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3 class="feature-title">مواعيد أفلام الرعب</h3>
+                    <p class="feature-description">أحدث عروض أفلام الرعب والإثارة لا تفوتها!</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="rules">
+            <h2>الممنوعات</h2>
+            <ul class="rules">
+                <li class="rule-item">هتدخل لبنت هتتهان وهتتطلع م الروم 🫵🏻</li>
+                <li class="rule-item">ممنوع السرقه اللي عايز حاجه يقول للادمن</li>
+                <li class="rule-item">اهم حاجه تتفاعل علشان بصفي ڪل يوم ولو صفيتڪ م هدخلڪ تاني</li>
+            </ul>
+        </section>
+        
+        <section id="cta" class="cta-section">
+            <h2>انضم إلينا الآن!</h2>
+            <p style="margin-bottom: 2rem; font-size: 1.2rem;">
+                لا تفوت فرصة الانضمام إلى عالم الرعب والإثارة!<br>
+                وفيه برضو ضحك مع رعب عشان تعرف تنام 😂🤡
+            </p>
+            <a href="https://chat.whatsapp.com/JGC1afkKbMNAYNpg1hG5iL?mode=ac_t" class="join-btn">انضم للمجموعة</a>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>ده الروم الرسمي - أي روم غيره تقليد</p>
+            <p class="admin-info">Admin: .. ❞ Nona | Taran ❝..</p>
+        </div>
+    </footer>
+
+    <script>
+        // إضافة تأثيرات تفاعلية إضافية
+        document.addEventListener('DOMContentLoaded', function() {
+            // تأثير اهتزاز للبطاقات عند التمرير
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            // تأثير التمرير
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const rate = scrolled * -0.5;
+                
+                document.querySelector('header').style.transform = `translateY(${rate * 0.5}px)`;
+            });
+            
+            // تأثير عشوائي للأشباح العائمة
+            const ghosts = document.querySelectorAll('.floating-ghost');
+            ghosts.forEach(ghost => {
+                const randomDelay = Math.random() * 5;
+                ghost.style.animationDelay = `${randomDelay}s`;
+            });
+            
+            // تأثير وميض عشوائي للنص
+            setInterval(() => {
+                const randomElement = document.querySelector('.feature-card:nth-child(' + (Math.floor(Math.random() * 3) + 1) + ')');
+                randomElement.style.boxShadow = '0 0 20px rgba(139, 0, 0, 0.8)';
+                
+                setTimeout(() => {
+                    randomElement.style.boxShadow = '';
+                }, 500);
+            }, 3000);
+            
+            // تأثير عشوائي للإضاءة
+            setInterval(() => {
+                const lights = document.querySelectorAll('.light');
+                lights.forEach(light => {
+                    const randomOpacity = Math.random() * 0.5;
+                    const randomScale = 0.8 + Math.random() * 0.4;
+                    light.style.opacity = randomOpacity;
+                    light.style.transform = `scale(${randomScale})`;
+                });
+            }, 1000);
+            
+            // تأثير صوتي خفيف عند التمرير
+            window.addEventListener('scroll', function() {
+                const scrollPercentage = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+                
+                if (scrollPercentage > 50) {
+                    document.querySelector('.join-btn').style.animation = 'pulse 1s infinite, shake 0.5s';
+                }
+            });
+            
+            // إضافة تأثير اهتزاز للزر
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    50% { transform: translateX(5px); }
+                    75% { transform: translateX(-5px); }
+                    100% { transform: translateX(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
