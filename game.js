@@ -174,9 +174,9 @@ const bird = {
 
         // تعليق كود الخسارة عند الاصطدام
         
-    //    if (this.y + r >= gnd.y || this.collisioned()) {
-    //      state.curr = state.gameOver;
-//        }
+        if (this.y + r >= gnd.y || this.collisioned()) {
+          state.curr = state.gameOver;
+        }
         
         break;
 
