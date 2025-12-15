@@ -1,484 +1,82 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 لعبة الجاسوس - Spyfall</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- تحميل Discord SDK أولاً -->
-    <script src="https://unpkg.com/@discord/embedded-app-sdk@latest"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 Spyfall Activity</title>
+
+  <!-- Discord Embedded App SDK -->
+  <script src="https://unpkg.com/@discord/embedded-app-sdk@latest"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .card {
+      background: #020617;
+      padding: 30px;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    }
+    .ok { color: #22c55e; }
+    .err { color: #ef4444; }
+    button {
+      margin-top: 20px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
 </head>
+
 <body>
-    <!-- شاشة التحميل -->
-    <div id="loading-screen" class="screen">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <h1>🎮 جاري تحميل لعبة الجاسوس...</h1>
-            <p>مقترح اللعبة: Angle | مطور البوت: Marwan Santos</p>
-            <div id="loading-error" class="error-message hidden">
-                <p>⚠️ حدث خطأ في التحميل. يرجى:</p>
-                <ul>
-                    <li>التأكد من فتح Discord في متصفح سطح المكتب</li>
-                    <li>التأكد من تواجدك في قناة صوتية</li>
-                    <li>تحديث الصفحة (F5)</li>
-                </ul>
-                <button id="retry-btn" class="btn btn-primary">🔄 إعادة المحاولة</button>
-            </div>
-        </div>
-    </div>
+  <div class="card">
+    <h2>🎭 لعبة الجاسوس</h2>
+    <p id="status">⏳ جاري الاتصال بـ Discord...</p>
+    <p id="user"></p>
+    <button id="retry" hidden>🔄 إعادة المحاولة</button>
+  </div>
 
-    <!-- الشاشة الرئيسية -->
-    <div id="main-screen" class="screen hidden">
-        <!-- الهيدر -->
-        <header class="game-header">
-            <div class="header-left">
-                <h1>🎭 لعبة الجاسوس</h1>
-                <div id="game-phase" class="phase-indicator">جاري الإعداد...</div>
-            </div>
-            <div class="header-right">
-                <div id="timer" class="timer">02:00</div>
-                <div id="player-count" class="player-count">👥 0 لاعبين</div>
-                <div id="sdk-status" class="sdk-status disconnected" title="حالة اتصال Discord">🔴</div>
-            </div>
-        </header>
+  <!-- SDK Logic -->
+  <script src="sdk.js"></script>
 
-        <!-- المحتوى الرئيسي -->
-        <main class="game-container">
-            <!-- لوحة المشاركين -->
-            <section class="players-panel">
-                <h2>👥 اللاعبون في الصوت</h2>
-                <div id="players-list" class="players-list">
-                    <!-- سيتم تعبئته ديناميكيًا -->
-                    <div class="no-players-message">
-                        <p>⚠️ انضم إلى قناة صوتية في Discord لرؤية اللاعبين</p>
-                    </div>
-                </div>
-                <div class="host-controls">
-                    <button id="start-game-btn" class="btn btn-primary" disabled>
-                        بدء اللعبة (مطلوب 3-8 لاعبين)
-                    </button>
-                    <button id="restart-btn" class="btn btn-secondary hidden">
-                        🔄 إعادة اللعبة
-                    </button>
-                    <button id="debug-btn" class="btn btn-warning">
-                        🐛 وضع التصحيح
-                    </button>
-                </div>
-            </section>
+  <script>
+    async function start() {
+      const status = document.getElementById("status");
+      const user = document.getElementById("user");
+      const retry = document.getElementById("retry");
 
-            <!-- لوحة اللعبة الرئيسية -->
-            <section class="game-panel">
-                <!-- شاشة الاتصال -->
-                <div id="connection-view" class="action-view">
-                    <h2>🔗 الاتصال بـ Discord</h2>
-                    <div class="connection-status">
-                        <div class="status-item">
-                            <span class="status-label">حالة SDK:</span>
-                            <span id="sdk-status-text" class="status-value">❌ غير متصل</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">معرف التطبيق:</span>
-                            <span class="status-value">1428774370012041246</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">المستخدم:</span>
-                            <span id="user-status" class="status-value">غير محدد</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">القناة الصوتية:</span>
-                            <span id="channel-status" class="status-value">غير محدد</span>
-                        </div>
-                    </div>
-                    
-                    <div class="connection-instructions">
-                        <h3>📋 تعليمات التشغيل:</h3>
-                        <ol>
-                            <li>افتح <strong>Discord</strong> على سطح المكتب</li>
-                            <li>انضم إلى <strong>قناة صوتية</strong></li>
-                            <li>انقر على زر <strong>"Activities"</strong> (🎮)</li>
-                            <li>اختر "تصفح الأنشطة" وابحث عن "Spyfall"</li>
-                            <li>أو افتح هذا الرابط مباشرة من داخل Discord</li>
-                        </ol>
-                    </div>
-                    
-                    <div class="connection-actions">
-                        <button id="init-sdk-btn" class="btn btn-primary">
-                            🔄 تهيئة اتصال Discord
-                        </button>
-                        <button id="check-players-btn" class="btn btn-secondary">
-                            🔍 فحص اللاعبين
-                        </button>
-                    </div>
-                </div>
+      const ok = await window.spyfallSDK.init();
 
-                <!-- عرض الدور -->
-                <div id="role-view" class="role-view hidden">
-                    <div class="role-card" id="spy-card">
-                        <h3>🎭 أنت الجاسوس!</h3>
-                        <p>أنت <strong>الجاسوس</strong> في هذه اللعبة!</p>
-                        <div class="hints-box">
-                            <h4>💡 تلميحات للأسئلة:</h4>
-                            <ul>
-                                <li>• هل نذهب إليه في العطلات؟</li>
-                                <li>• هل يحتاج إلى تذكرة؟</li>
-                                <li>• هل يمكننا الشراء منه؟</li>
-                                <li>• هل فيه موظفون؟</li>
-                                <li>• هل يفتح في الليل؟</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="role-card" id="civilian-card">
-                        <h3>📍 أنت مدني</h3>
-                        <p>أنت <strong>مدني</strong> في هذه اللعبة!</p>
-                        <div class="location-info">
-                            <h4>🏢 المكان: <span id="location-name">...</span></h4>
-                            <div class="hints-box">
-                                <h4>💡 تلميحات المكان:</h4>
-                                <ul id="location-hints">
-                                    <!-- يتم تعبئته ديناميكيًا -->
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      if (!ok) {
+        status.textContent = "❌ فشل الاتصال بـ Discord";
+        status.className = "err";
+        retry.hidden = false;
+        return;
+      }
 
-                <!-- لوحة الجولة -->
-                <div id="round-view" class="round-view hidden">
-                    <div class="round-header">
-                        <h2>🔄 الجولة <span id="current-round">1</span> من <span id="total-rounds">3</span></h2>
-                        <div class="round-status">
-                            <div id="speaker-indicator" class="speaker-indicator hidden">
-                                🎤 <span id="current-speaker">...</span> يتحدث الآن
-                            </div>
-                        </div>
-                    </div>
+      const me = window.spyfallSDK.user;
+      status.textContent = "✅ تم الاتصال بـ Discord";
+      status.className = "ok";
+      user.textContent = `👤 ${me.global_name || me.username}`;
+    }
 
-                    <!-- اختيار اللاعب للسؤال -->
-                    <div id="player-select-view" class="action-view hidden">
-                        <h3>🎤 اختر لاعباً لتسأله</h3>
-                        <p>أنت: <strong id="current-player-name">...</strong></p>
-                        <div id="selectable-players" class="players-grid">
-                            <!-- أزرار اختيار اللاعبين -->
-                        </div>
-                    </div>
-
-                    <!-- سؤال قيد التنفيذ -->
-                    <div id="question-view" class="action-view hidden">
-                        <h3>🎤 السؤال جارٍ</h3>
-                        <div class="question-participants">
-                            <div class="participant asker">
-                                <div class="speaking-indicator active"></div>
-                                <span id="asker-name">...</span>
-                                <small>السائل</small>
-                            </div>
-                            <div class="arrow">→</div>
-                            <div class="participant asked">
-                                <div class="speaking-indicator"></div>
-                                <span id="asked-name">...</span>
-                                <small>المسؤول</small>
-                            </div>
-                        </div>
-                        <div class="question-timer">
-                            ⏰ الوقت المتبقي: <span id="question-time">02:00</span>
-                        </div>
-                        <button id="end-question-btn" class="btn btn-danger">
-                            ✅ إنهاء السؤال
-                        </button>
-                    </div>
-
-                    <!-- تصويت الجولة -->
-                    <div id="round-vote-view" class="action-view hidden">
-                        <h3>🗳️ تصويت الجولة</h3>
-                        <p>هل تريدون استكمال الجولة التالية أم الانتقال للتصويت النهائي؟</p>
-                        <div class="vote-options">
-                            <button class="vote-btn btn-success" data-vote="continue">
-                                🔄 استكمال الجولة التالية
-                            </button>
-                            <button class="vote-btn btn-danger" data-vote="end">
-                                ⏹️ إنهاء والتصويت النهائي
-                            </button>
-                        </div>
-                        <div class="votes-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="continue-progress" style="width: 0%"></div>
-                                <div class="progress-fill" id="end-progress" style="width: 0%"></div>
-                            </div>
-                            <div class="vote-counts">
-                                <span>استكمال: <span id="continue-count">0</span></span>
-                                <span>إنهاء: <span id="end-count">0</span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- التصويت النهائي -->
-                    <div id="final-vote-view" class="action-view hidden">
-                        <h3>🏁 التصويت النهائي</h3>
-                        <p>من تعتقد أنه الجاسوس؟ (لا يمكنك التصويت لنفسك)</p>
-                        <div id="final-vote-players" class="players-grid">
-                            <!-- أزرار التصويت النهائي -->
-                        </div>
-                        <div class="votes-progress">
-                            <div id="final-votes-display">
-                                <!-- عرض الأصوات -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- فرصة تخمين الجاسوس -->
-                    <div id="spy-guess-view" class="action-view hidden">
-                        <h3>🎯 فرصة أخيرة للجاسوس!</h3>
-                        <p>لديك 30 ثانية لتخمين المكان!</p>
-                        <div id="locations-grid" class="locations-grid">
-                            <!-- قائمة الأماكن -->
-                        </div>
-                        <div class="guess-timer">
-                            ⏰ الوقت المتبقي: <span id="guess-time">00:30</span>
-                        </div>
-                    </div>
-
-                    <!-- نتائج اللعبة -->
-                    <div id="results-view" class="action-view hidden">
-                        <h3>🎮 نهاية اللعبة</h3>
-                        <div class="results-content">
-                            <div class="result-section">
-                                <h4>🏆 الفائزون</h4>
-                                <p id="winners-text">...</p>
-                            </div>
-                            <div class="result-section">
-                                <h4>🎭 الجاسوس كان</h4>
-                                <p id="spy-result">...</p>
-                            </div>
-                            <div class="result-section">
-                                <h4>📍 المكان كان</h4>
-                                <p id="location-result">...</p>
-                            </div>
-                            <div class="result-section">
-                                <h4>📊 إحصائيات اللعبة</h4>
-                                <ul id="game-stats">
-                                    <!-- الإحصائيات -->
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- الفوتر -->
-        <footer class="game-footer">
-            <div class="footer-info">
-                <p>مقترح اللعبة: Angle | مطور البوت: Marwan Santos</p>
-                <p id="voice-status" class="voice-status">🔇 غير متصل بالصوت</p>
-            </div>
-            <div class="spectator-info">
-                <small>👁️ المتفرجون: <span id="spectator-count">0</span></small>
-            </div>
-            <div class="debug-info">
-                <small id="debug-text" class="hidden">🐛 وضع التصحيح مفعل</small>
-            </div>
-        </footer>
-    </div>
-
-    <!-- نافذة التصحيح -->
-    <div id="debug-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🐛 معلومات التصحيح</h3>
-                <button id="close-debug-btn" class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="debug-section">
-                    <h4>📊 حالة SDK:</h4>
-                    <pre id="debug-sdk-state">جاري التحميل...</pre>
-                </div>
-                <div class="debug-section">
-                    <h4>👥 اللاعبون:</h4>
-                    <pre id="debug-players">جاري التحميل...</pre>
-                </div>
-                <div class="debug-section">
-                    <h4>⚠️ الأخطاء الأخيرة:</h4>
-                    <pre id="debug-errors">لا توجد أخطاء</pre>
-                </div>
-                <div class="debug-actions">
-                    <button id="refresh-state-btn" class="btn btn-secondary">🔄 تحديث الحالة</button>
-                    <button id="clear-log-btn" class="btn btn-warning">🗑️ مسح السجلات</button>
-                    <button id="test-sdk-btn" class="btn btn-primary">🧪 اختبار اتصال SDK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ملفات JavaScript -->
-    <script src="state.js"></script>
-    <script src="sdk.js"></script>
-    <script src="main.js"></script>
-    
-    <!-- تهيئة SDK تلقائيًا عند تحميل الصفحة -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // كشف نوع الجهاز ونوع التشغيل
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isInDiscord = window.DiscordNative !== undefined;
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-        
-            console.log('📱 معلومات الجهاز:', {
-                isMobile: isMobile,
-                isInDiscord: isInDiscord,
-                isStandalone: isStandalone,
-                userAgent: navigator.userAgent.substring(0, 100)
-            });
-
-            // إخفاء الرسالة الخاطئة عن الهاتف
-            const loadingError = document.getElementById('loading-error');
-            if (loadingError) {
-                loadingError.innerHTML = `
-                    <p>⚠️ حدث خطأ في التحميل. يرجى:</p>
-                    <ul>
-                        <li>التأكد من أنك داخل تطبيق Discord</li>
-                        <li>التأكد من تواجدك في قناة صوتية</li>
-                        <li>${isMobile ? 'استخدام تطبيق Discord للهاتف' : 'تحديث الصفحة (F5)'}</li>
-                    </ul>
-                    <button id="retry-btn" class="btn btn-primary">🔄 إعادة المحاولة</button>
-                `;
-            }
-
-            // تهيئة اللعبة بمنطق مختلف لكل جهاز
-            let sdkLoaded = false;
-        
-            // محاولة تحميل SDK مع إعادة المحاولة التلقائية
-            function initializeSDK() {
-                console.log(`🚀 محاولة تهيئة SDK على ${isMobile ? 'هاتف' : 'سطح مكتب'}`);
-            
-                // تأخير للتأكد من تحميل مكتبة Discord
-                setTimeout(() => {
-                    if (typeof Discord === 'undefined') {
-                        console.error('❌ مكتبة Discord لم تُحمَّل');
-                        if (isMobile) {
-                            // على الهاتف، قد تحتاج طريقة مختلفة
-                            loadSDKWithFallback();
-                        } else {
-                            retrySDK();
-                        }
-                        return;
-                    }
-                
-                    if (window.spyfallGame) {
-                        window.spyfallGame.initialize().then(function(success) {
-                            if (success) {
-                                console.log('✅ SDK مهيأ بنجاح');
-                                sdkLoaded = true;
-                                document.getElementById('loading-screen').classList.add('hidden');
-                                document.getElementById('main-screen').classList.remove('hidden');
-                            
-                                // إخفاء شاشة الاتصال إذا كانت متصلاً
-                                if (window.discordSDK && window.discordSDK.initialized) {
-                                    document.getElementById('connection-view').classList.add('hidden');
-                                    document.getElementById('round-view').classList.remove('hidden');
-                                }
-                            } else {
-                                console.error('❌ فشل تهيئة اللعبة');
-                                handleSDKError();
-                            }
-                        }).catch(function(error) {
-                            console.error('❌ خطأ في التهيئة:', error);
-                            handleSDKError();
-                        });
-                    } else {
-                        console.error('❌ كائن spyfallGame غير موجود');
-                        handleSDKError();
-                    }
-                }, 1000);
-            }
-
-            function loadSDKWithFallback() {
-                console.log('🔄 تحميل SDK بطريقة احتياطية للهاتف');
-                // طريقة بديلة للهاتف
-                const script = document.createElement('script');
-                script.src = 'https://unpkg.com/@discord/embedded-app-sdk@0.1.14'; // إصدار ثابت
-                script.onload = function() {
-                    console.log('✅ SDK احتياطي محمّل');
-                    initializeSDK();
-                };
-                script.onerror = function() {
-                    console.error('❌ فشل تحميل SDK الاحتياطي');
-                    showMobileInstructions();
-                };
-                document.head.appendChild(script);
-            }
-    
-            function retrySDK() {
-                const maxRetries = 3;
-                let currentRetry = 0;
-                
-                function tryAgain() {
-                    if (currentRetry >= maxRetries) {
-                        console.error(`❌ فشل بعد ${maxRetries} محاولات`);
-                        if (isMobile) {
-                            showMobileInstructions();
-                        } else {
-                            document.getElementById('loading-error').classList.remove('hidden');
-                        }
-                        return;
-                    }
-                
-                    currentRetry++;
-                    console.log(`🔄 المحاولة ${currentRetry} من ${maxRetries}`);
-                    
-                    setTimeout(() => {
-                        if (typeof Discord !== 'undefined' && window.spyfallGame) {
-                            initializeSDK();
-                        } else {
-                            tryAgain();
-                        }
-                    }, 2000);
-                }
-            
-                tryAgain();
-            }
-
-            function showMobileInstructions() {
-                const instructions = `
-                    <div class="mobile-instructions">
-                        <h3>📱 لتشغيل اللعبة على هاتفك:</h3>
-                        <ol>
-                            <li>افتح <strong>تطبيق Discord</strong> على هاتفك</li>
-                            <li>انضم إلى <strong>قناة صوتية</strong></li>
-                            <li>انقر على أيقونة <strong>"Activities"</strong> 🎮 في الأعلى</li>
-                            <li>ابحث عن "Spyfall" واختاره</li>
-                            <li>يمكنك أيضًا فتح هذا الرابط داخل تطبيق Discord:<br>
-                                <code>discord://activities/1428774370012041246</code>
-                            </li>
-                        </ol>
-                        <p><em>ملاحظة: يجب أن تكون داخل تطبيق Discord، وليس متصفح الهاتف العادي.</em></p>
-                        <button onclick="location.reload()" class="btn btn-primary">🔄 إعادة تحميل</button>
-                        <button onclick="window.open('discord://activities/1428774370012041246', '_blank')" class="btn btn-success">
-                            🔗 فتح في Discord
-                        </button>
-                    </div>
-                `;
-                
-                loadingError.innerHTML = instructions;
-                loadingError.classList.remove('hidden');
-            }
-
-            function handleSDKError() {
-                if (isMobile) {
-                    showMobileInstructions();
-                } else {
-                    document.getElementById('loading-error').classList.remove('hidden');
-                }
-            }
-
-        // بدء التهيئة
-            initializeSDK();
-
-            // زر إعادة المحاولة
-            document.addEventListener('click', function(e) {
-                if (e.target.id === 'retry-btn') {
-                    location.reload();
-                }
-            });
-        });
-    </script>
+    document.getElementById("retry").onclick = () => location.reload();
+    start();
+  </script>
 </body>
-    </html>
+</html>
