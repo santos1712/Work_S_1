@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 لعبة الجاسوس - Spyfall</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Discord SDK -->
+    <script src="https://unpkg.com/@discord/embedded-app-sdk"></script>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div id="loading-screen" class="screen">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h1>🎮 جاري تحميل لعبة الجاسوس...</h1>
+            <p>مقترح اللعبة: Angle | مطور البوت: Marwan Santos</p>
+        </div>
+    </div>
+
+    <!-- الشاشة الرئيسية -->
+    <div id="main-screen" class="screen hidden">
+        <!-- الهيدر -->
+        <header class="game-header">
+            <div class="header-left">
+                <h1>🎭 لعبة الجاسوس</h1>
+                <div id="game-phase" class="phase-indicator">جاري الإعداد...</div>
+            </div>
+            <div class="header-right">
+                <div id="timer" class="timer">02:00</div>
+                <div id="player-count" class="player-count">👥 0 لاعبين</div>
+            </div>
+        </header>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="game-container">
+            <!-- لوحة المشاركين -->
+            <section class="players-panel">
+                <h2>👥 اللاعبون في الصوت</h2>
+                <div id="players-list" class="players-list">
+                    <!-- يتم تعبئته ديناميكيًا -->
+                </div>
+                <div class="host-controls">
+                    <button id="start-game-btn" class="btn btn-primary" disabled>
+                        بدء اللعبة (مطلوب 3-8 لاعبين)
+                    </button>
+                    <button id="restart-btn" class="btn btn-secondary hidden">
+                        🔄 إعادة اللعبة
+                    </button>
+                </div>
+            </section>
+
+            <!-- لوحة اللعبة الرئيسية -->
+            <section class="game-panel">
+                <!-- عرض الدور -->
+                <div id="role-view" class="role-view hidden">
+                    <div class="role-card" id="spy-card">
+                        <h3>🎭 أنت الجاسوس!</h3>
+                        <p>أنت <strong>الجاسوس</strong> في هذه اللعبة!</p>
+                        <div class="hints-box">
+                            <h4>💡 تلميحات للأسئلة:</h4>
+                            <ul>
+                                <li>• هل نذهب إليه في العطلات؟</li>
+                                <li>• هل يحتاج إلى تذكرة؟</li>
+                                <li>• هل يمكننا الشراء منه؟</li>
+                                <li>• هل فيه موظفون؟</li>
+                                <li>• هل يفتح في الليل؟</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="role-card" id="civilian-card">
+                        <h3>📍 أنت مدني</h3>
+                        <p>أنت <strong>مدني</strong> في هذه اللعبة!</p>
+                        <div class="location-info">
+                            <h4>🏢 المكان: <span id="location-name">...</span></h4>
+                            <div class="hints-box">
+                                <h4>💡 تلميحات المكان:</h4>
+                                <ul id="location-hints">
+                                    <!-- يتم تعبئته ديناميكيًا -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- لوحة الجولة -->
+                <div id="round-view" class="round-view">
+                    <div class="round-header">
+                        <h2>🔄 الجولة <span id="current-round">1</span> من <span id="total-rounds">3</span></h2>
+                        <div class="round-status">
+                            <div id="speaker-indicator" class="speaker-indicator hidden">
+                                🎤 <span id="current-speaker">...</span> يتحدث الآن
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- اختيار اللاعب للسؤال -->
+                    <div id="player-select-view" class="action-view hidden">
+                        <h3>🎤 اختر لاعباً لتسأله</h3>
+                        <p>أنت: <strong id="current-player-name">...</strong></p>
+                        <div id="selectable-players" class="players-grid">
+                            <!-- أزرار اختيار اللاعبين -->
+                        </div>
+                    </div>
+
+                    <!-- سؤال قيد التنفيذ -->
+                    <div id="question-view" class="action-view hidden">
+                        <h3>🎤 السؤال جارٍ</h3>
+                        <div class="question-participants">
+                            <div class="participant asker">
+                                <div class="speaking-indicator active"></div>
+                                <span id="asker-name">...</span>
+                                <small>السائل</small>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="participant asked">
+                                <div class="speaking-indicator"></div>
+                                <span id="asked-name">...</span>
+                                <small>المسؤول</small>
+                            </div>
+                        </div>
+                        <div class="question-timer">
+                            ⏰ الوقت المتبقي: <span id="question-time">02:00</span>
+                        </div>
+                        <button id="end-question-btn" class="btn btn-danger">
+                            ✅ إنهاء السؤال
+                        </button>
+                    </div>
+
+                    <!-- تصويت الجولة -->
+                    <div id="round-vote-view" class="action-view hidden">
+                        <h3>🗳️ تصويت الجولة</h3>
+                        <p>هل تريدون استكمال الجولة التالية أم الانتقال للتصويت النهائي؟</p>
+                        <div class="vote-options">
+                            <button class="vote-btn btn-success" data-vote="continue">
+                                🔄 استكمال الجولة التالية
+                            </button>
+                            <button class="vote-btn btn-danger" data-vote="end">
+                                ⏹️ إنهاء والتصويت النهائي
+                            </button>
+                        </div>
+                        <div class="votes-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="continue-progress" style="width: 0%"></div>
+                                <div class="progress-fill" id="end-progress" style="width: 0%"></div>
+                            </div>
+                            <div class="vote-counts">
+                                <span>استكمال: <span id="continue-count">0</span></span>
+                                <span>إنهاء: <span id="end-count">0</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- التصويت النهائي -->
+                    <div id="final-vote-view" class="action-view hidden">
+                        <h3>🏁 التصويت النهائي</h3>
+                        <p>من تعتقد أنه الجاسوس؟ (لا يمكنك التصويت لنفسك)</p>
+                        <div id="final-vote-players" class="players-grid">
+                            <!-- أزرار التصويت النهائي -->
+                        </div>
+                        <div class="votes-progress">
+                            <div id="final-votes-display">
+                                <!-- عرض الأصوات -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- فرصة تخمين الجاسوس -->
+                    <div id="spy-guess-view" class="action-view hidden">
+                        <h3>🎯 فرصة أخيرة للجاسوس!</h3>
+                        <p>لديك 30 ثانية لتخمين المكان!</p>
+                        <div id="locations-grid" class="locations-grid">
+                            <!-- قائمة الأماكن -->
+                        </div>
+                        <div class="guess-timer">
+                            ⏰ الوقت المتبقي: <span id="guess-time">00:30</span>
+                        </div>
+                    </div>
+
+                    <!-- نتائج اللعبة -->
+                    <div id="results-view" class="action-view hidden">
+                        <h3>🎮 نهاية اللعبة</h3>
+                        <div class="results-content">
+                            <div class="result-section">
+                                <h4>🏆 الفائزون</h4>
+                                <p id="winners-text">...</p>
+                            </div>
+                            <div class="result-section">
+                                <h4>🎭 الجاسوس كان</h4>
+                                <p id="spy-result">...</p>
+                            </div>
+                            <div class="result-section">
+                                <h4>📍 المكان كان</h4>
+                                <p id="location-result">...</p>
+                            </div>
+                            <div class="result-section">
+                                <h4>📊 إحصائيات اللعبة</h4>
+                                <ul id="game-stats">
+                                    <!-- الإحصائيات -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- الفوتر -->
+        <footer class="game-footer">
+            <div class="footer-info">
+                <p>مقترح اللعبة: Angle | مطور البوت: Marwan Santos</p>
+                <p id="voice-status" class="voice-status">🔊 متصل بالصوت</p>
+            </div>
+            <div class="spectator-info">
+                <small>👁️ المتفرجون: <span id="spectator-count">0</span></small>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SDK Script -->
+    <script src="sdk.js"></script>
+    <!-- State Management -->
+    <script src="state.js"></script>
+    <!-- Main Game Logic -->
+    <script src="main.js"></script>
+</body>
+</html>
