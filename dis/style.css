@@ -460,3 +460,108 @@ body {
         font-size: 14px;
     }
 }
+/* تنسيقات للهواتف */
+@media (max-width: 768px) {
+    .game-container {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .players-panel {
+        max-height: 200px;
+        order: 2;
+    }
+    
+    .game-panel {
+        order: 1;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .timer {
+        font-size: 20px;
+    }
+    
+    .action-view {
+        padding: 15px;
+    }
+    
+    .players-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .mobile-instructions {
+        background-color: var(--discord-dark);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        text-align: right;
+    }
+    
+    .mobile-instructions ol {
+        margin-right: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .mobile-instructions li {
+        margin-bottom: 10px;
+        line-height: 1.5;
+    }
+    
+    .mobile-instructions code {
+        background-color: var(--discord-darkest);
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-family: monospace;
+        display: inline-block;
+        margin: 5px 0;
+        word-break: break-all;
+    }
+}
+
+/* وضع ملء الشاشة للهاتف */
+@media (max-width: 480px) {
+    .game-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .players-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .locations-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .btn {
+        padding: 12px;
+        margin: 5px 0;
+        width: 100%;
+    }
+    
+    .question-participants {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .participant {
+        min-width: 100%;
+    }
+}
+
+/* إخفاء عناصر غير ضرورية على الهاتف */
+@media (max-height: 700px) {
+    .game-footer {
+        display: none;
+    }
+    
+    .phase-indicator {
+        font-size: 12px;
+        padding: 3px 10px;
+    }
+    }
