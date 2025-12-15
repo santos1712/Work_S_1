@@ -315,34 +315,170 @@
     
     <!-- تهيئة SDK تلقائيًا عند تحميل الصفحة -->
     <script>
-        // تهيئة اللعبة بعد تحميل الصفحة بالكامل
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 صفحة Spyfall تم تحميلها، جاري تهيئة SDK...');
+            // كشف نوع الجهاز ونوع التشغيل
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isInDiscord = window.DiscordNative !== undefined;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        
+            console.log('📱 معلومات الجهاز:', {
+                isMobile: isMobile,
+                isInDiscord: isInDiscord,
+                isStandalone: isStandalone,
+                userAgent: navigator.userAgent.substring(0, 100)
+            });
+
+            // إخفاء الرسالة الخاطئة عن الهاتف
+            const loadingError = document.getElementById('loading-error');
+            if (loadingError) {
+                loadingError.innerHTML = `
+                    <p>⚠️ حدث خطأ في التحميل. يرجى:</p>
+                    <ul>
+                        <li>التأكد من أنك داخل تطبيق Discord</li>
+                        <li>التأكد من تواجدك في قناة صوتية</li>
+                        <li>${isMobile ? 'استخدام تطبيق Discord للهاتف' : 'تحديث الصفحة (F5)'}</li>
+                    </ul>
+                    <button id="retry-btn" class="btn btn-primary">🔄 إعادة المحاولة</button>
+                `;
+            }
+
+            // تهيئة اللعبة بمنطق مختلف لكل جهاز
+            let sdkLoaded = false;
+        
+            // محاولة تحميل SDK مع إعادة المحاولة التلقائية
+            function initializeSDK() {
+                console.log(`🚀 محاولة تهيئة SDK على ${isMobile ? 'هاتف' : 'سطح مكتب'}`);
             
-            // تهيئة اللعبة بعد تحميل جميع الملفات
-            setTimeout(function() {
-                if (window.spyfallGame) {
-                    window.spyfallGame.initialize().then(function(success) {
-                        if (success) {
-                            console.log('✅ تم تهيئة اللعبة بنجاح');
-                            document.getElementById('sdk-status').className = 'sdk-status connected';
-                            document.getElementById('sdk-status-text').textContent = '✅ متصل';
+                // تأخير للتأكد من تحميل مكتبة Discord
+                setTimeout(() => {
+                    if (typeof Discord === 'undefined') {
+                        console.error('❌ مكتبة Discord لم تُحمَّل');
+                        if (isMobile) {
+                            // على الهاتف، قد تحتاج طريقة مختلفة
+                            loadSDKWithFallback();
                         } else {
-                            console.error('❌ فشل تهيئة اللعبة');
+                            retrySDK();
+                        }
+                        return;
+                    }
+                
+                    if (window.spyfallGame) {
+                        window.spyfallGame.initialize().then(function(success) {
+                            if (success) {
+                                console.log('✅ SDK مهيأ بنجاح');
+                                sdkLoaded = true;
+                                document.getElementById('loading-screen').classList.add('hidden');
+                                document.getElementById('main-screen').classList.remove('hidden');
+                            
+                                // إخفاء شاشة الاتصال إذا كانت متصلاً
+                                if (window.discordSDK && window.discordSDK.initialized) {
+                                    document.getElementById('connection-view').classList.add('hidden');
+                                    document.getElementById('round-view').classList.remove('hidden');
+                                }
+                            } else {
+                                console.error('❌ فشل تهيئة اللعبة');
+                                handleSDKError();
+                            }
+                        }).catch(function(error) {
+                            console.error('❌ خطأ في التهيئة:', error);
+                            handleSDKError();
+                        });
+                    } else {
+                        console.error('❌ كائن spyfallGame غير موجود');
+                        handleSDKError();
+                    }
+                }, 1000);
+            }
+
+            function loadSDKWithFallback() {
+                console.log('🔄 تحميل SDK بطريقة احتياطية للهاتف');
+                // طريقة بديلة للهاتف
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/@discord/embedded-app-sdk@0.1.14'; // إصدار ثابت
+                script.onload = function() {
+                    console.log('✅ SDK احتياطي محمّل');
+                    initializeSDK();
+                };
+                script.onerror = function() {
+                    console.error('❌ فشل تحميل SDK الاحتياطي');
+                    showMobileInstructions();
+                };
+                document.head.appendChild(script);
+            }
+    
+            function retrySDK() {
+                const maxRetries = 3;
+                let currentRetry = 0;
+                
+                function tryAgain() {
+                    if (currentRetry >= maxRetries) {
+                        console.error(`❌ فشل بعد ${maxRetries} محاولات`);
+                        if (isMobile) {
+                            showMobileInstructions();
+                        } else {
                             document.getElementById('loading-error').classList.remove('hidden');
                         }
-                    });
+                        return;
+                    }
+                
+                    currentRetry++;
+                    console.log(`🔄 المحاولة ${currentRetry} من ${maxRetries}`);
+                    
+                    setTimeout(() => {
+                        if (typeof Discord !== 'undefined' && window.spyfallGame) {
+                            initializeSDK();
+                        } else {
+                            tryAgain();
+                        }
+                    }, 2000);
+                }
+            
+                tryAgain();
+            }
+
+            function showMobileInstructions() {
+                const instructions = `
+                    <div class="mobile-instructions">
+                        <h3>📱 لتشغيل اللعبة على هاتفك:</h3>
+                        <ol>
+                            <li>افتح <strong>تطبيق Discord</strong> على هاتفك</li>
+                            <li>انضم إلى <strong>قناة صوتية</strong></li>
+                            <li>انقر على أيقونة <strong>"Activities"</strong> 🎮 في الأعلى</li>
+                            <li>ابحث عن "Spyfall" واختاره</li>
+                            <li>يمكنك أيضًا فتح هذا الرابط داخل تطبيق Discord:<br>
+                                <code>discord://activities/1428774370012041246</code>
+                            </li>
+                        </ol>
+                        <p><em>ملاحظة: يجب أن تكون داخل تطبيق Discord، وليس متصفح الهاتف العادي.</em></p>
+                        <button onclick="location.reload()" class="btn btn-primary">🔄 إعادة تحميل</button>
+                        <button onclick="window.open('discord://activities/1428774370012041246', '_blank')" class="btn btn-success">
+                            🔗 فتح في Discord
+                        </button>
+                    </div>
+                `;
+                
+                loadingError.innerHTML = instructions;
+                loadingError.classList.remove('hidden');
+            }
+
+            function handleSDKError() {
+                if (isMobile) {
+                    showMobileInstructions();
                 } else {
-                    console.error('❌ كائن spyfallGame غير موجود');
                     document.getElementById('loading-error').classList.remove('hidden');
                 }
-            }, 1000); // انتظار 1 ثانية لتحميل جميع الملفات
-            
-            // إعداد زر إعادة المحاولة
-            document.getElementById('retry-btn').addEventListener('click', function() {
-                location.reload();
+            }
+
+        // بدء التهيئة
+            initializeSDK();
+
+            // زر إعادة المحاولة
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'retry-btn') {
+                    location.reload();
+                }
             });
         });
     </script>
 </body>
-</html>
+    </html>
