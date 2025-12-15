@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎮 لعبة الجاسوس - Spyfall</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Discord SDK -->
-    <script src="https://unpkg.com/@discord/embedded-app-sdk"></script>
+    <!-- تحميل Discord SDK أولاً -->
+    <script src="https://unpkg.com/@discord/embedded-app-sdk@latest"></script>
 </head>
 <body>
     <!-- شاشة التحميل -->
@@ -15,6 +15,15 @@
             <div class="spinner"></div>
             <h1>🎮 جاري تحميل لعبة الجاسوس...</h1>
             <p>مقترح اللعبة: Angle | مطور البوت: Marwan Santos</p>
+            <div id="loading-error" class="error-message hidden">
+                <p>⚠️ حدث خطأ في التحميل. يرجى:</p>
+                <ul>
+                    <li>التأكد من فتح Discord في متصفح سطح المكتب</li>
+                    <li>التأكد من تواجدك في قناة صوتية</li>
+                    <li>تحديث الصفحة (F5)</li>
+                </ul>
+                <button id="retry-btn" class="btn btn-primary">🔄 إعادة المحاولة</button>
+            </div>
         </div>
     </div>
 
@@ -29,6 +38,7 @@
             <div class="header-right">
                 <div id="timer" class="timer">02:00</div>
                 <div id="player-count" class="player-count">👥 0 لاعبين</div>
+                <div id="sdk-status" class="sdk-status disconnected" title="حالة اتصال Discord">🔴</div>
             </div>
         </header>
 
@@ -38,7 +48,10 @@
             <section class="players-panel">
                 <h2>👥 اللاعبون في الصوت</h2>
                 <div id="players-list" class="players-list">
-                    <!-- يتم تعبئته ديناميكيًا -->
+                    <!-- سيتم تعبئته ديناميكيًا -->
+                    <div class="no-players-message">
+                        <p>⚠️ انضم إلى قناة صوتية في Discord لرؤية اللاعبين</p>
+                    </div>
                 </div>
                 <div class="host-controls">
                     <button id="start-game-btn" class="btn btn-primary" disabled>
@@ -47,11 +60,57 @@
                     <button id="restart-btn" class="btn btn-secondary hidden">
                         🔄 إعادة اللعبة
                     </button>
+                    <button id="debug-btn" class="btn btn-warning">
+                        🐛 وضع التصحيح
+                    </button>
                 </div>
             </section>
 
             <!-- لوحة اللعبة الرئيسية -->
             <section class="game-panel">
+                <!-- شاشة الاتصال -->
+                <div id="connection-view" class="action-view">
+                    <h2>🔗 الاتصال بـ Discord</h2>
+                    <div class="connection-status">
+                        <div class="status-item">
+                            <span class="status-label">حالة SDK:</span>
+                            <span id="sdk-status-text" class="status-value">❌ غير متصل</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">معرف التطبيق:</span>
+                            <span class="status-value">1428774370012041246</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">المستخدم:</span>
+                            <span id="user-status" class="status-value">غير محدد</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">القناة الصوتية:</span>
+                            <span id="channel-status" class="status-value">غير محدد</span>
+                        </div>
+                    </div>
+                    
+                    <div class="connection-instructions">
+                        <h3>📋 تعليمات التشغيل:</h3>
+                        <ol>
+                            <li>افتح <strong>Discord</strong> على سطح المكتب</li>
+                            <li>انضم إلى <strong>قناة صوتية</strong></li>
+                            <li>انقر على زر <strong>"Activities"</strong> (🎮)</li>
+                            <li>اختر "تصفح الأنشطة" وابحث عن "Spyfall"</li>
+                            <li>أو افتح هذا الرابط مباشرة من داخل Discord</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="connection-actions">
+                        <button id="init-sdk-btn" class="btn btn-primary">
+                            🔄 تهيئة اتصال Discord
+                        </button>
+                        <button id="check-players-btn" class="btn btn-secondary">
+                            🔍 فحص اللاعبين
+                        </button>
+                    </div>
+                </div>
+
                 <!-- عرض الدور -->
                 <div id="role-view" class="role-view hidden">
                     <div class="role-card" id="spy-card">
@@ -84,7 +143,7 @@
                 </div>
 
                 <!-- لوحة الجولة -->
-                <div id="round-view" class="round-view">
+                <div id="round-view" class="round-view hidden">
                     <div class="round-header">
                         <h2>🔄 الجولة <span id="current-round">1</span> من <span id="total-rounds">3</span></h2>
                         <div class="round-status">
@@ -209,19 +268,81 @@
         <footer class="game-footer">
             <div class="footer-info">
                 <p>مقترح اللعبة: Angle | مطور البوت: Marwan Santos</p>
-                <p id="voice-status" class="voice-status">🔊 متصل بالصوت</p>
+                <p id="voice-status" class="voice-status">🔇 غير متصل بالصوت</p>
             </div>
             <div class="spectator-info">
                 <small>👁️ المتفرجون: <span id="spectator-count">0</span></small>
             </div>
+            <div class="debug-info">
+                <small id="debug-text" class="hidden">🐛 وضع التصحيح مفعل</small>
+            </div>
         </footer>
     </div>
 
-    <!-- SDK Script -->
-    <script src="sdk.js"></script>
-    <!-- State Management -->
+    <!-- نافذة التصحيح -->
+    <div id="debug-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🐛 معلومات التصحيح</h3>
+                <button id="close-debug-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="debug-section">
+                    <h4>📊 حالة SDK:</h4>
+                    <pre id="debug-sdk-state">جاري التحميل...</pre>
+                </div>
+                <div class="debug-section">
+                    <h4>👥 اللاعبون:</h4>
+                    <pre id="debug-players">جاري التحميل...</pre>
+                </div>
+                <div class="debug-section">
+                    <h4>⚠️ الأخطاء الأخيرة:</h4>
+                    <pre id="debug-errors">لا توجد أخطاء</pre>
+                </div>
+                <div class="debug-actions">
+                    <button id="refresh-state-btn" class="btn btn-secondary">🔄 تحديث الحالة</button>
+                    <button id="clear-log-btn" class="btn btn-warning">🗑️ مسح السجلات</button>
+                    <button id="test-sdk-btn" class="btn btn-primary">🧪 اختبار اتصال SDK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ملفات JavaScript -->
     <script src="state.js"></script>
-    <!-- Main Game Logic -->
+    <script src="sdk.js"></script>
     <script src="main.js"></script>
+    
+    <!-- تهيئة SDK تلقائيًا عند تحميل الصفحة -->
+    <script>
+        // تهيئة اللعبة بعد تحميل الصفحة بالكامل
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 صفحة Spyfall تم تحميلها، جاري تهيئة SDK...');
+            
+            // تهيئة اللعبة بعد تحميل جميع الملفات
+            setTimeout(function() {
+                if (window.spyfallGame) {
+                    window.spyfallGame.initialize().then(function(success) {
+                        if (success) {
+                            console.log('✅ تم تهيئة اللعبة بنجاح');
+                            document.getElementById('sdk-status').className = 'sdk-status connected';
+                            document.getElementById('sdk-status-text').textContent = '✅ متصل';
+                        } else {
+                            console.error('❌ فشل تهيئة اللعبة');
+                            document.getElementById('loading-error').classList.remove('hidden');
+                        }
+                    });
+                } else {
+                    console.error('❌ كائن spyfallGame غير موجود');
+                    document.getElementById('loading-error').classList.remove('hidden');
+                }
+            }, 1000); // انتظار 1 ثانية لتحميل جميع الملفات
+            
+            // إعداد زر إعادة المحاولة
+            document.getElementById('retry-btn').addEventListener('click', function() {
+                location.reload();
+            });
+        });
+    </script>
 </body>
 </html>
