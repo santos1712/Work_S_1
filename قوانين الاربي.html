@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قوانين MTA San Andreas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a252f;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --gray: #7f8c8d;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+        
+        /* أنيميشن دخول الصفحة */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        /* الهيدر */
+        header {
+            background: rgba(26, 37, 47, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 25px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideInRight 0.8s ease-out;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            color: var(--secondary);
+            font-size: 2.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--secondary), #1abc9c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tagline {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        /* قسم البحث */
+        .search-container {
+            margin: 40px 0 30px;
+            position: relative;
+            animation: fadeIn 1.2s ease-out;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 18px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.3);
+            transform: scale(1.02);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        /* عرض القوانين */
+        .laws-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .law-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .law-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--secondary);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .law-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .law-code {
+            background: var(--secondary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        .law-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--light);
+        }
+        
+        .law-description {
+            padding: 20px;
+            line-height: 1.6;
+            color: #bdc3c7;
+        }
+        
+        .law-footer {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .law-category {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        
+        /* العدادات */
+        .counters {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        .counter {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            flex: 1;
+            margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .counter:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .counter-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .counter-title {
+            font-size: 1.1rem;
+            color: var(--light);
+        }
+        
+        /* رسالة عدم وجود نتائج */
+        .no-results {
+            text-align: center;
+            padding: 50px 20px;
+            grid-column: 1 / -1;
+            animation: fadeIn 0.5s;
+        }
+        
+        .no-results i {
+            font-size: 4rem;
+            color: var(--gray);
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        /* زر العودة للأعلى */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--secondary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .scroll-top.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scroll-top:hover {
+            background: #2980b9;
+            transform: scale(1.1);
+        }
+        
+        /* الفلاتر */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 30px;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .filter-btn.active {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        /* التكيف مع الشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .laws-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .counters {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .counter {
+                margin: 0;
+            }
+            
+            .search-box {
+                font-size: 1rem;
+                padding: 15px 20px 15px 50px;
+            }
+        }
+        
+        /* أنيميشن البطاقات بشكل متدرج */
+        .law-card:nth-child(1) { animation-delay: 0.1s; }
+        .law-card:nth-child(2) { animation-delay: 0.2s; }
+        .law-card:nth-child(3) { animation-delay: 0.3s; }
+        .law-card:nth-child(4) { animation-delay: 0.4s; }
+        .law-card:nth-child(5) { animation-delay: 0.5s; }
+        .law-card:nth-child(6) { animation-delay: 0.6s; }
+        .law-card:nth-child(7) { animation-delay: 0.7s; }
+        .law-card:nth-child(8) { animation-delay: 0.8s; }
+        .law-card:nth-child(9) { animation-delay: 0.9s; }
+        .law-card:nth-child(10) { animation-delay: 1.0s; }
+        
+        /* أنيميشن الأحرف في البحث */
+        @keyframes highlight {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(52, 152, 219, 0.5); }
+        }
+        
+        .highlight {
+            animation: highlight 0.5s ease;
+        }
+        
+        /* تخصيص شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <!-- الهيدر -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-gamepad logo-icon"></i>
+                    <div>
+                        <h1>قوانين MTA San Andreas</h1>
+                        <p class="tagline">المرجع الشامل لقوانين لعبة MTA San Andreas - قسم الأدوار (RP)</p>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div style="display: flex; gap: 15px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; color: var(--secondary); font-weight: bold;">36</div>
+                            <div style="font-size: 0.9rem; color: var(--gray);">عدد القوانين</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; color: var(--success); font-weight: bold;">RP</div>
+                            <div style="font-size: 0.9rem; color: var(--gray);">نوع السيرفر</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- قسم البحث -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن أي قانون (اسم، رمز، أو وصف)...">
+        </div>
+        
+        <!-- الفلاتر -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">جميع القوانين</button>
+            <button class="filter-btn" data-filter="قتل">قوانين القتل</button>
+            <button class="filter-btn" data-filter="قواعد">قواعد عامة</button>
+            <button class="filter-btn" data-filter="مركبات">قوانين المركبات</button>
+            <button class="filter-btn" data-filter="أخرى">قوانين أخرى</button>
+        </div>
+        
+        <!-- العدادات -->
+        <div class="counters">
+            <div class="counter">
+                <div class="counter-number" id="totalLaws">36</div>
+                <div class="counter-title">إجمالي القوانين</div>
+            </div>
+            <div class="counter">
+                <div class="counter-number" id="visibleLaws">36</div>
+                <div class="counter-title">القوانين المعروضة</div>
+            </div>
+            <div class="counter">
+                <div class="counter-number" id="searchCount">0</div>
+                <div class="counter-title">نتائج البحث</div>
+            </div>
+        </div>
+        
+        <!-- شبكة القوانين -->
+        <div id="lawsContainer" class="laws-grid">
+            <!-- سيتم إضافة القوانين هنا ديناميكيًا -->
+        </div>
+        
+        <!-- رسالة عدم وجود نتائج -->
+        <div id="noResultsMessage" class="no-results" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h2>لا توجد نتائج</h2>
+            <p>لم نعثر على أي قانون يتطابق مع بحثك. حاول استخدام كلمات بحث أخرى.</p>
+        </div>
+    </div>
+    
+    <!-- زر العودة للأعلى -->
+    <div class="scroll-top" id="scrollTopBtn">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <script>
+        // بيانات القوانين
+        const laws = [
+            {code: "ATA", name: "نقل الممتلكات من شخصيه لاخري", description: "نقل الممتلكات من شخصيه لاخري", category: "قواعد"},
+            {code: "ARSON", name: "تسبب حريق", description: "تسبب حريق ويجب وجود اطفاء", category: "أخرى"},
+            {code: "FRP", name: "فشل في تقمص الدور", description: "فشل اللاعب في تقمص دور شخصيته", category: "قواعد"},
+            {code: "BH", name: "قفزه الارنب", description: "وهي انك تجري وتقفز باستمرار لتقريب المسافه", category: "قواعد"},
+            {code: "BRAWLC", name: "القتل بدون الاربي", description: "القتل بدون الاربي", category: "قتل"},
+            {code: "BR", name: "القتل داخل الاربي", description: "ان يجب عليك القتل داخل الاربي فقط", category: "قتل"},
+            {code: "CK", name: "اعدام الشخصيه", description: "اعدام الشخصيه من قبل الادمن لو مت خارج المدينه او بمداهمه او في تبادل اطلاق النار بين الشرطه والعصابه", category: "قتل"},
+            {code: "CCTV", name: "لغه التهكير والبرمجه", description: "لغه التهكير والبرمجه", category: "قواعد"},
+            {code: "CR", name: "الجري وتفادي اطلاق النار", description: "الجري وتفادي اطلاق النار", category: "قواعد"},
+            {code: "CD", name: "تطوير الشخصيه", description: "تطوير الشخصيه مثل انك تدرب شخصيتك علي السباحه", category: "قواعد"},
+            {code: "DM", name: "القتل بدون سبب", description: "مثال انك تلاقي شخص ماشي تقوم قتله بدون سبب", category: "قتل"},
+            {code: "DDB", name: "اطلاق النار بسلاح ثقيل", description: "وهو انك تطلق النار بسلاح ثقيل وانت تسوق مثل ال Ak, M4,...", category: "قتل"},
+            {code: "DP", name: "دعس شخص بالاربي", description: "دعس شخص بالاربي", category: "مركبات"},
+            {code: "DUC", name: "تخريب الشخصيه", description: "تخريب الشخصيه زي الانتحار", category: "أخرى"},
+            {code: "DOS", name: "شاره بدون ديوتي", description: "شاره بدون ديوتي والعكس", category: "أخرى"},
+            {code: "DFL", name: "تدمير حياة الشخصية", description: "تدمير حياة الشخصية مثل التدخين", category: "أخرى"},
+            {code: "GR", name: "القاعده الذهبيه", description: "وهي احترام الاعبين وعدم سبهم خارج الاربي", category: "قواعد"},
+            {code: "KOS", name: "الحقد علي شخص", description: "الحقد علي شخص داخل اربي او خارجه", category: "قتل"},
+            {code: "LTA", name: "الهروب من اربي", description: "مثال انك تكون في اربي والشرطه قابضه عليك تقوم خارج من السيرفر", category: "قواعد"},
+            {code: "LK", name: "تحتاج اذن لاطلاق نار", description: "تحتاج اذن لاطلاق نار في مكان عام مثل مركز المدينه", category: "قتل"},
+            {code: "MG", name: "تفريق بين الشاتين", description: "تفريق بين الشاتين", category: "أخرى"},
+            {code: "MC", name: "اطلاق نار او ضرب بالخطا", description: "اطلاق نار او ضرب شخص بالخطا", category: "قتل"},
+            {code: "MA", name: "حساب واحد", description: "ان كل شخص يمتلك حساب واحد", category: "قواعد"},
+            {code: "Multiple Accounts", name: "تعدد الحسابات", description: "تعدد الحسابات مثل انك تسوي اكتر من حساب", category: "قواعد"},
+            {code: "NJ", name: "سرقه او فعل اشياء دون اربي", description: "وهي ان تسرق او تفعل اشياء دون عمل اربي", category: "أخرى"},
+            {code: "NG", name: "تنزل شخص من مركبته", description: "تنزل شخص من مركبته الخاص به", category: "مركبات"},
+            {code: "NK", name: "ضرب شخص بيدك او بسلاح ابيض", description: "ضرب شخص بيدك او بسلاح ابيض وانت تجري", category: "قتل"},
+            {code: "NON-RP", name: "فعل اشياء بدون اربي", description: "فعل اشياء بدون اربي", category: "قواعد"},
+            {code: "PG", name: "فعل اشياء خارقه", description: "فعل اشياء خارقه مثل انك تصدم ولاتحس", category: "أخرى"},
+            {code: "PK", name: "فقدان الذاكره", description: "فقدان الذاكره لمده محدده بعد قتلك وعندما تنتهي المده تتذكر كل شئ ببطء", category: "أخرى"},
+            {code: "PD", name: "استفزاز الشرطه", description: "وهي ان تستفز الشرطه فقط من اجل ان تستمتع", category: "أخرى"},
+            {code: "PI", name: "تفتيش الممتلكات", description: "قانون تفتيش الممتلكات و العقارات", category: "قواعد"},
+            {code: "RK", name: "قتل الانتقام", description: "قتل الانتقام مثال شخص قتلك او قتل صديقك بعدها تروح تقتله", category: "قتل"},
+            {code: "RTR", name: "الركض المستمر", description: "الركض المستمر دون تعب او توقف وهذا يعتبر ضمن ال PG", category: "أخرى"},
+            {code: "RPZ", name: "لعب اربي في منطقه محدوده", description: "لعب اربي في منطقه محدوده ولاتخرج منها", category: "قواعد"},
+            {code: "RPG", name: "اريبي جي", description: "اخذ اربي جي من امر السلاح وعليها وارن", category: "قتل"},
+            {code: "RDM", name: "قتل نفس الشخص", description: "قتل نفس الشخص بدون توقف", category: "قتل"},
+            {code: "SK", name: "قتل الاعبين في مكان الريسباون", description: "وهي قتل الاعبين في مكان الريسباون", category: "قتل"},
+            {code: "SL", name: "فعل اشياء مقزره", description: "فعل اشياء مقزره بمكان عام", category: "أخرى"},
+            {code: "SP", name: "النصب باكثر من 10 الاف", description: "النصب باكثر من 10 الاف", category: "أخرى"},
+            {code: "SC", name: "اسم شخصيه مشهوره", description: "تستخدم اسم شخصيه مشهوره", category: "قواعد"},
+            {code: "TK", name: "قتل شخص بالفاكشن", description: "قتل شخص بالفاكشن", category: "قتل"},
+            {code: "UH", name: "العادات المضره", description: "فعل العادات المضره مثل التدخين", category: "أخرى"},
+            {code: "VDM", name: "دعس الاشخاص بالسياره", description: "تستخدم سياره لدعس الاشخاص", category: "مركبات"},
+            {code: "WA", name: "اعلان خاطئ", description: "اعلان خاطئ", category: "أخرى"},
+            {code: "WH", name: "القفز بالموتسيكل", description: "تركب موتسيكل وتقفز فوق الجبال والبيوت", category: "مركبات"},
+            {code: "WS", name: "ساتيوس خاطئ", description: "ساتيوس خاطئ", category: "أخرى"}
+        ];
+
+        // العناصر الأساسية
+        const lawsContainer = document.getElementById('lawsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        const totalLawsElement = document.getElementById('totalLaws');
+        const visibleLawsElement = document.getElementById('visibleLaws');
+        const searchCountElement = document.getElementById('searchCount');
+
+        let currentFilter = 'all';
+        let currentSearchTerm = '';
+        
+        // تهيئة العداد الإجمالي
+        totalLawsElement.textContent = laws.length;
+        
+        // إنشاء بطاقات القوانين
+        function createLawCards(filteredLaws) {
+            lawsContainer.innerHTML = '';
+            
+            if (filteredLaws.length === 0) {
+                noResultsMessage.style.display = 'block';
+                visibleLawsElement.textContent = '0';
+                searchCountElement.textContent = '0';
+                return;
+            }
+            
+            noResultsMessage.style.display = 'none';
+            visibleLawsElement.textContent = filteredLaws.length;
+            
+            // حساب نتائج البحث
+            if (currentSearchTerm) {
+                searchCountElement.textContent = filteredLaws.length;
+            } else {
+                searchCountElement.textContent = '0';
+            }
+            
+            filteredLaws.forEach((law, index) => {
+                const lawCard = document.createElement('div');
+                lawCard.className = 'law-card';
+                lawCard.style.animationDelay = `${(index % 10) * 0.1}s`;
+                
+                // تعيين لون الفئة
+                let categoryColor = 'var(--warning)';
+                if (law.category === 'قتل') categoryColor = 'var(--accent)';
+                if (law.category === 'قواعد') categoryColor = 'var(--success)';
+                if (law.category === 'مركبات') categoryColor = 'var(--secondary)';
+                
+                lawCard.innerHTML = `
+                    <div class="law-header">
+                        <div class="law-name">${highlightSearchTerm(law.name)}</div>
+                        <div class="law-code">${law.code}</div>
+                    </div>
+                    <div class="law-description">${highlightSearchTerm(law.description)}</div>
+                    <div class="law-footer">
+                        <div class="law-category" style="background-color: ${categoryColor}22; color: ${categoryColor}">
+                            ${law.category}
+                        </div>
+                        <div><i class="fas fa-info-circle"></i> MTA San Andreas</div>
+                    </div>
+                `;
+                
+                // إضافة تأثير عند النقر
+                lawCard.addEventListener('click', () => {
+                    lawCard.style.animation = 'pulse 0.5s';
+                    setTimeout(() => {
+                        lawCard.style.animation = '';
+                    }, 500);
+                    
+                    // إظهار تفاصيل القانون (يمكن توسيع هذه الوظيفة)
+                    alert(`تفاصيل القانون:\n\n${law.name}\n\n${law.description}`);
+                });
+                
+                lawsContainer.appendChild(lawCard);
+            });
+        }
+        
+        // تمييز نص البحث في النتائج
+        function highlightSearchTerm(text) {
+            if (!currentSearchTerm.trim()) return text;
+            
+            const regex = new RegExp(`(${currentSearchTerm})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+        
+        // تصفية القوانين
+        function filterLaws() {
+            let filtered = laws;
+            
+            // تطبيق البحث
+            if (currentSearchTerm) {
+                filtered = filtered.filter(law => 
+                    law.name.includes(currentSearchTerm) || 
+                    law.code.includes(currentSearchTerm.toUpperCase()) || 
+                    law.description.includes(currentSearchTerm) ||
+                    law.category.includes(currentSearchTerm)
+                );
+            }
+            
+            // تطبيق الفلتر
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(law => law.category === currentFilter);
+            }
+            
+            createLawCards(filtered);
+        }
+        
+        // البحث أثناء الكتابة
+        searchInput.addEventListener('input', function() {
+            currentSearchTerm = this.value.trim();
+            filterLaws();
+        });
+        
+        // الفلاتر
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // إزالة النشاط من جميع الأزرار
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // إضافة النشاط للزر المحدد
+                this.classList.add('active');
+                // تحديث الفلتر الحالي
+                currentFilter = this.dataset.filter;
+                filterLaws();
+            });
+        });
+        
+        // زر العودة للأعلى
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('active');
+            } else {
+                scrollTopBtn.classList.remove('active');
+            }
+        });
+        
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // تأثيرات إضافية عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            // إضافة تأثير للبحث
+            searchInput.placeholder = "جرب أن تبحث عن 'قتل' أو 'مركبات' أو 'DM'...";
+            
+            // إنشاء البطاقات الأولية
+            createLawCards(laws);
+            
+            // تأثيرات وهمية للعدادات
+            animateCounter(totalLawsElement, 0, laws.length, 1500);
+        });
+        
+        // تأثير عد الأرقام
+        function animateCounter(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        // تأثيرات إضافية عند التركيز على البحث
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+        
+        // تأثيرات عشوائية للبطاقات
+        setInterval(() => {
+            const cards = document.querySelectorAll('.law-card');
+            if (cards.length > 0) {
+                const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                randomCard.style.transform = `translateY(-5px) rotate(${Math.random() * 2 - 1}deg)`;
+                
+                setTimeout(() => {
+                    randomCard.style.transform = '';
+                }, 1000);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
