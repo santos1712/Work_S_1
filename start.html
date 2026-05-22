@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marwan Neon Startpage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1d0033, #090014 60%);
+      overflow-x: hidden;
+      color: white;
+      padding: 30px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      background: rgba(255, 0, 200, 0.2);
+      filter: blur(120px);
+      top: -150px;
+      right: -150px;
+      z-index: -1;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      background: rgba(0, 255, 255, 0.15);
+      filter: blur(120px);
+      bottom: -120px;
+      left: -120px;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: auto;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 40px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow:
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 40px #ff00ff;
+    }
+
+    .clock {
+      font-size: 24px;
+      background: rgba(255,255,255,0.05);
+      padding: 15px 25px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0,255,255,0.2);
+    }
+
+    .search-box {
+      margin-bottom: 35px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-box input {
+      width: 100%;
+      max-width: 700px;
+      padding: 18px 25px;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-size: 18px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(255,0,255,0.25);
+      transition: 0.3s;
+    }
+
+    .search-box input:focus {
+      transform: scale(1.02);
+      box-shadow: 0 0 30px rgba(0,255,255,0.35);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 25px;
+      padding: 25px;
+      backdrop-filter: blur(14px);
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 0 30px rgba(255,0,255,0.3);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 5px;
+      top: 0;
+      left: 0;
+      background: linear-gradient(90deg, #00ffff, #ff00ff);
+    }
+
+    .card h2 {
+      margin-bottom: 18px;
+      font-size: 22px;
+      color: #00ffff;
+      text-shadow: 0 0 10px rgba(0,255,255,0.5);
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .links a {
+      text-decoration: none;
+      color: white;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      transition: 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .links a:hover {
+      background: rgba(0,255,255,0.15);
+      transform: translateX(-5px);
+      box-shadow: 0 0 15px rgba(0,255,255,0.25);
+    }
+
+    .add-btn {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 40px;
+      color: white;
+      background: linear-gradient(135deg, #ff00ff, #00ffff);
+      box-shadow:
+        0 0 20px rgba(255,0,255,0.6),
+        0 0 35px rgba(0,255,255,0.5);
+      transition: 0.3s;
+      z-index: 999;
+    }
+
+    .add-btn:hover {
+      transform: scale(1.1) rotate(90deg);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      width: 90%;
+      max-width: 450px;
+      background: #120021;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: 0 0 40px rgba(255,0,255,0.3);
+    }
+
+    .modal-content h3 {
+      margin-bottom: 20px;
+      color: #00ffff;
+      text-align: center;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 15px;
+      border: none;
+      outline: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+
+    .modal-content button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 15px;
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(135deg, #ff00ff, #00ffff);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      opacity: 0.6;
+    }
+
+    @media (max-width: 600px) {
+      .logo {
+        font-size: 28px;
+      }
+
+      .clock {
+        font-size: 18px;
+      }
+
+      .search-box input {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="top">
+      <div class="logo">⚡ MARWAN Santos SPACE</div>
+      <div class="clock" id="clock">00:00:00</div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="search" placeholder="ابحث في جوجل...">
+    </div>
+
+    <div class="grid" id="grid">
+
+      <div class="card">
+        <h2>🎮 Gaming</h2>
+        <div class="links">
+          <a href="https://store.steampowered.com" target="_blank">Steam <span>↗</span></a>
+          <a href="https://playvalorant.com" target="_blank">Valorant <span>↗</span></a>
+          <a href="https://store.epicgames.com" target="_blank">Epic Games <span>↗</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💻 Coding</h2>
+        <div class="links">
+          <a href="https://github.com" target="_blank">GitHub <span>↗</span></a>
+          <a href="https://workers.cloudflare.com" target="_blank">Cloudflare <span>↗</span></a>
+          <a href="https://replit.com" target="_blank">Replit <span>↗</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🎵 Music</h2>
+        <div class="links">
+          <a href="https://spotify.com" target="_blank">Spotify <span>↗</span></a>
+          <a href="https://youtube.com" target="_blank">YouTube <span>↗</span></a>
+          <a href="https://soundcloud.com" target="_blank">SoundCloud <span>↗</span></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Made with Neon Energy ⚡
+    </div>
+
+  </div>
+
+  <button class="add-btn" id="openModal">+</button>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>إضافة موقع جديد</h3>
+      <input type="text" id="siteName" placeholder="اسم الموقع">
+      <input type="url" id="siteUrl" placeholder="لينك الموقع">
+      <button onclick="addWebsite()">إضافة</button>
+    </div>
+  </div>
+
+  <script>
+
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('ar-EG');
+      document.getElementById('clock').innerText = time;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    document.getElementById('search').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        window.location.href = `https://www.google.com/search?q=${this.value}`;
+      }
+    });
+
+    const modal = document.getElementById('modal');
+
+    document.getElementById('openModal').onclick = () => {
+      modal.style.display = 'flex';
+    }
+
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function addWebsite() {
+      const name = document.getElementById('siteName').value;
+      const url = document.getElementById('siteUrl').value;
+
+      if (!name || !url) {
+        alert('اكتب البيانات كاملة');
+        return;
+      }
+
+      const customCardId = 'custom-links';
+      let customCard = document.getElementById(customCardId);
+
+      if (!customCard) {
+        customCard = document.createElement('div');
+        customCard.className = 'card';
+        customCard.id = customCardId;
+
+        customCard.innerHTML = `
+          <h2>⭐ مواقعك</h2>
+          <div class="links"></div>
+        `;
+
+        document.getElementById('grid').appendChild(customCard);
+      }
+
+      const linksContainer = customCard.querySelector('.links');
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.innerHTML = `${name} <span>↗</span>`;
+
+      linksContainer.appendChild(link);
+
+      saveLinks();
+
+      document.getElementById('siteName').value = '';
+      document.getElementById('siteUrl').value = '';
+
+      modal.style.display = 'none';
+    }
+
+    function saveLinks() {
+      const customCard = document.getElementById('custom-links');
+      if (!customCard) return;
+
+      const links = [];
+
+      customCard.querySelectorAll('a').forEach(link => {
+        links.push({
+          name: link.textContent.replace('↗', '').trim(),
+          url: link.href
+        });
+      });
+
+      localStorage.setItem('marwanLinks', JSON.stringify(links));
+    }
+
+    function loadLinks() {
+      const saved = JSON.parse(localStorage.getItem('marwanLinks'));
+
+      if (!saved || saved.length === 0) return;
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = 'custom-links';
+
+      card.innerHTML = `
+        <h2>⭐ مواقعك</h2>
+        <div class="links"></div>
+      `;
+
+      document.getElementById('grid').appendChild(card);
+
+      const container = card.querySelector('.links');
+
+      saved.forEach(site => {
+        const link = document.createElement('a');
+        link.href = site.url;
+        link.target = '_blank';
+        link.innerHTML = `${site.name} <span>↗</span>`;
+        container.appendChild(link);
+      });
+    }
+
+    loadLinks();
+
+  </script>
+
+</body>
+</html>
