@@ -604,8 +604,8 @@ document.addEventListener('click', e => {
   const fromX = window.innerWidth * 0.15;
   const fromY = window.innerHeight * 0.85;
 
+  playGrenade(); // الصوت يشتغل فور الكليك قبل الرمي
   throwGrenade(fromX, fromY, toX, toY, () => {
-    playGrenade();
     grenadeExplosion(toX, toY);
     flash('rgba(255,120,0,0.6)', 120);
     shake();
@@ -715,42 +715,42 @@ function addWebsite() {
       satchelExplosion(ex, ey);
       flash('rgba(255,136,0,0.35)', 80);
 
-      // 1. Lift the last link UP (just visually, keep it in DOM)
+      // 1. بعد 1.5 ثانية من انفجار الـ satchel — ارفع اللينك لفوق
       if (lastLink) {
-        lastLink.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.45s';
-        lastLink.style.transform  = 'translateY(-70px)';
-        lastLink.style.opacity    = '0.6';
-
-        // 2. Insert new link BELOW (at the bottom) while old is flying up
-        const newLink = makeLinkEl(name, url, hostname);
-        newLink.style.opacity   = '0';
-        newLink.style.transform = 'translateY(40px)';
-        newLink.style.transition = 'none';
-        linksContainer.appendChild(newLink);
-
-        // 3. Bring old link back down to its original position, slide new one up
         setTimeout(() => {
-          lastLink.style.transform = 'translateY(0)';
-          lastLink.style.opacity   = '1';
+          lastLink.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.45s';
+          lastLink.style.transform  = 'translateY(-70px)';
+          lastLink.style.opacity    = '0.6';
 
-          // slight delay then reveal new link with slide-up
-          setTimeout(() => {
-            newLink.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.45s';
-            newLink.style.transform  = 'translateY(0)';
-            newLink.style.opacity    = '1';
-          }, 80);
+          // 2. حط اللينك الجديد تحته وهو بيطلع
+          const newLink = makeLinkEl(name, url, hostname);
+          newLink.style.opacity    = '0';
+          newLink.style.transform  = 'translateY(40px)';
+          newLink.style.transition = 'none';
+          linksContainer.appendChild(newLink);
 
-          // clean up inline styles after animation
+          // 3. رجّع اللينك القديم لمكانه + اظهر الجديد
           setTimeout(() => {
-            lastLink.style.transition = '';
-            lastLink.style.transform  = '';
-            lastLink.style.opacity    = '';
-            newLink.style.transition  = '';
-            newLink.style.transform   = '';
-            newLink.style.opacity     = '';
-            saveLinks();
-          }, 550);
-        }, 450);
+            lastLink.style.transform = 'translateY(0)';
+            lastLink.style.opacity   = '1';
+
+            setTimeout(() => {
+              newLink.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.45s';
+              newLink.style.transform  = 'translateY(0)';
+              newLink.style.opacity    = '1';
+            }, 80);
+
+            setTimeout(() => {
+              lastLink.style.transition = '';
+              lastLink.style.transform  = '';
+              lastLink.style.opacity    = '';
+              newLink.style.transition  = '';
+              newLink.style.transform   = '';
+              newLink.style.opacity     = '';
+              saveLinks();
+            }, 550);
+          }, 450);
+        }, 1500); // ← 1.5 ثانية تأخير قبل النطة
 
       } else {
         // No existing link — just slide new one in
