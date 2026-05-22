@@ -1,0 +1,6 @@
+{
+  "web_accessible_resources": [{
+    "resources": ["sounds/*.mp3", "raze-bg.png"],
+    "matches": ["<all_urls>"]
+  }]
+}
