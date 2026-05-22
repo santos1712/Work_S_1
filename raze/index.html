@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Marwan Santos Space</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
+body{
+  min-height:100vh;overflow-x:hidden;color:white;padding:30px;
+  position:relative;cursor:none;
+  background:#0a0010;
+}
+
+/* === BG IMAGE === */
+#bg-img{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  object-fit:cover;z-index:-3;opacity:0.45;
+  object-position:center top;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(circle at 60% 40%,rgba(20,0,40,0.7),rgba(5,0,15,0.93) 70%);
+  z-index:-2;
+}
+
+/* === CROSSHAIR CURSOR === */
+#crosshair{
+  position:fixed;pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);width:20px;height:20px;
+}
+#crosshair::before,#crosshair::after{content:'';position:absolute;background:#ff4655;}
+#crosshair::before{width:1.5px;height:100%;left:50%;transform:translateX(-50%);}
+#crosshair::after{width:100%;height:1.5px;top:50%;transform:translateY(-50%);}
+#crosshair .cdot{
+  position:absolute;width:3px;height:3px;background:#ff4655;border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+
+/* === LAYOUT === */
+.container{max-width:1100px;margin:auto;position:relative;z-index:10;}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;margin-bottom:40px;}
+.logo{font-size:36px;font-weight:700;color:#fff;text-shadow:0 0 10px #ff4655,0 0 30px #ff4655;}
+.clock{font-size:22px;background:rgba(255,255,255,0.05);padding:12px 22px;border-radius:20px;
+  border:1px solid rgba(255,70,85,0.3);backdrop-filter:blur(10px);}
+
+.search-box{margin-bottom:35px;display:flex;justify-content:center;}
+.search-box input{
+  width:100%;max-width:700px;padding:18px 25px;border-radius:20px;border:none;outline:none;
+  background:rgba(255,255,255,0.08);color:white;font-size:18px;backdrop-filter:blur(10px);
+  box-shadow:0 0 20px rgba(255,70,85,0.2);transition:0.3s;font-family:'Cairo',sans-serif;
+}
+.search-box input:focus{box-shadow:0 0 35px rgba(255,70,85,0.5);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;}
+.card{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,70,85,0.2);
+  border-radius:25px;padding:25px;backdrop-filter:blur(14px);transition:0.3s;
+  position:relative;overflow:visible;
+}
+.card:hover{box-shadow:0 0 25px rgba(255,70,85,0.25);}
+.card::before{
+  content:'';position:absolute;width:100%;height:4px;top:0;left:0;border-radius:25px 25px 0 0;
+  background:linear-gradient(90deg,#ff4655,#ff8800);
+}
+.card h2{margin-bottom:18px;font-size:20px;color:#ff4655;text-shadow:0 0 8px rgba(255,70,85,0.4);}
+.links{display:flex;flex-direction:column;gap:10px;}
+.link-item{
+  text-decoration:none;color:white;padding:10px 14px;border-radius:14px;
+  background:rgba(255,255,255,0.05);transition:0.25s;
+  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  position:relative;
+}
+.link-item:hover{background:rgba(255,70,85,0.12);}
+.link-favicon{width:18px;height:18px;border-radius:4px;object-fit:contain;flex-shrink:0;}
+.link-name{flex:1;text-align:right;}
+.link-del{
+  background:none;border:none;color:rgba(255,70,85,0.5);cursor:none;
+  font-size:14px;padding:2px 6px;border-radius:6px;transition:0.2s;
+  line-height:1;flex-shrink:0;
+}
+.link-del:hover{color:#ff4655;background:rgba(255,70,85,0.15);}
+
+/* ADD BTN */
+.add-btn{
+  position:fixed;bottom:25px;left:25px;width:65px;height:65px;border-radius:50%;
+  border:none;cursor:none;font-size:32px;color:white;
+  background:linear-gradient(135deg,#ff4655,#ff8800);
+  box-shadow:0 0 20px rgba(255,70,85,0.6);transition:0.3s;z-index:200;
+}
+.add-btn:hover{transform:scale(1.1) rotate(90deg);}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;
+  justify-content:center;align-items:center;z-index:1000;}
+.modal-content{
+  width:90%;max-width:440px;background:#120010;
+  border:1px solid rgba(255,70,85,0.3);border-radius:25px;padding:30px;
+  box-shadow:0 0 40px rgba(255,70,85,0.35);
+}
+.modal-content h3{margin-bottom:20px;color:#ff4655;text-align:center;font-size:21px;}
+.modal-content input{
+  width:100%;padding:14px;margin-bottom:14px;border-radius:14px;border:none;outline:none;
+  background:rgba(255,255,255,0.08);color:white;font-family:'Cairo',sans-serif;font-size:15px;
+}
+.modal-content button{
+  width:100%;padding:14px;border:none;border-radius:14px;font-size:16px;cursor:none;
+  color:white;background:linear-gradient(135deg,#ff4655,#ff8800);
+  font-family:'Cairo',sans-serif;font-weight:600;transition:0.2s;
+}
+.modal-content button:hover{transform:scale(1.02);}
+.footer{text-align:center;margin-top:50px;opacity:0.4;font-size:13px;}
+
+/* === LINK SLIDE-IN === */
+@keyframes slideUp{
+  0%{opacity:0;transform:translateY(50px) scale(0.9);}
+  70%{transform:translateY(-8px) scale(1.02);}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.link-new{animation:slideUp 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+
+/* === FLASH === */
+#flash{
+  position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:0;
+  background:radial-gradient(circle,rgba(255,120,0,0.65),transparent 55%);
+  transition:opacity 0.04s;
+}
+/* Ult flash */
+#ult-flash{
+  position:fixed;inset:0;pointer-events:none;z-index:9989;opacity:0;
+  background:rgba(255,60,0,0.5);transition:opacity 0.08s;
+}
+
+/* === CANVAS FOR ALL FX === */
+#fx-canvas{
+  position:fixed;inset:0;pointer-events:none;z-index:9980;
+}
+
+/* === ULT OVERLAY (screen destruction) === */
+#ult-overlay{
+  position:fixed;inset:0;pointer-events:none;z-index:9985;opacity:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,transparent 4px,
+    rgba(255,70,85,0.06) 4px,rgba(255,70,85,0.06) 5px
+  );
+  transition:opacity 0.2s;
+}
+/* Screen shake */
+@keyframes screenShake{
+  0%{transform:translate(0,0);}
+  10%{transform:translate(-8px,4px);}
+  20%{transform:translate(8px,-4px);}
+  30%{transform:translate(-6px,6px);}
+  40%{transform:translate(6px,-6px);}
+  50%{transform:translate(-4px,2px);}
+  60%{transform:translate(4px,-2px);}
+  70%{transform:translate(-2px,4px);}
+  80%{transform:translate(2px,-2px);}
+  100%{transform:translate(0,0);}
+}
+.shake{animation:screenShake 0.5s ease;}
+
+/* === PAINTBOT === */
+.paintbot{
+  position:fixed;pointer-events:none;z-index:9975;
+  width:36px;height:28px;
+}
+@keyframes botRun{
+  0%,100%{transform:scaleY(1);}
+  50%{transform:scaleY(0.85);}
+}
+
+/* === SATCHEL SVG === */
+.satchel-fly{
+  position:fixed;pointer-events:none;z-index:9970;
+  animation:satchelArc var(--dur,0.7s) cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+@keyframes satchelArc{
+  0%{transform:translate(0,0) rotate(0deg) scale(1);}
+  50%{transform:translate(var(--mx,0px),var(--my,-180px)) rotate(180deg) scale(1.1);}
+  100%{transform:translate(var(--ex,0px),var(--ey,0px)) rotate(360deg) scale(0.3);opacity:0;}
+}
+
+/* Link being lifted by satchel */
+@keyframes liftUp{
+  0%{transform:translateY(0);opacity:1;}
+  40%{transform:translateY(-80px) scale(1.05);opacity:0.7;}
+  100%{transform:translateY(-200px) scale(0.5);opacity:0;}
+}
+.link-lift{animation:liftUp 0.7s ease-in forwards;}
+</style>
+</head>
+<body>
+
+<!-- BG IMAGE -->
+<img id="bg-img" src="raze-bg.png" alt="" onerror="this.style.display='none'">
+
+<!-- CROSSHAIR -->
+<div id="crosshair"><div class="cdot"></div></div>
+
+<!-- FX LAYERS -->
+<canvas id="fx-canvas"></canvas>
+<div id="flash"></div>
+<div id="ult-flash"></div>
+<div id="ult-overlay"></div>
+
+<div class="container">
+  <div class="top">
+    <div class="logo">⚡ MARWAN Santos SPACE</div>
+    <div class="clock" id="clock">00:00:00</div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="search" placeholder="ابحث في جوجل... 🔍">
+  </div>
+
+  <div class="grid" id="grid">
+    <div class="card">
+      <h2>🎮 Gaming</h2>
+      <div class="links">
+        <a class="link-item" href="https://store.steampowered.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.steampowered.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">Steam</span><span>↗</span>
+        </a>
+        <a class="link-item" href="https://playvalorant.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=playvalorant.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">Valorant</span><span>↗</span>
+        </a>
+        <a class="link-item" href="https://store.epicgames.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.epicgames.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">Epic Games</span><span>↗</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💻 Coding</h2>
+      <div class="links">
+        <a class="link-item" href="https://github.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">GitHub</span><span>↗</span>
+        </a>
+        <a class="link-item" href="https://workers.cloudflare.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=cloudflare.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">Cloudflare</span><span>↗</span>
+        </a>
+        <a class="link-item" href="https://replit.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=replit.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">Replit</span><span>↗</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎵 Music</h2>
+      <div class="links">
+        <a class="link-item" href="https://spotify.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=spotify.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">Spotify</span><span>↗</span>
+        </a>
+        <a class="link-item" href="https://youtube.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=youtube.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">YouTube</span><span>↗</span>
+        </a>
+        <a class="link-item" href="https://soundcloud.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=soundcloud.com&sz=32" onerror="this.style.display='none'" alt="">
+          <span class="link-name">SoundCloud</span><span>↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Made with Neon Energy ⚡ — Marwan Santos Space</div>
+</div>
+
+<button class="add-btn" id="openModal">+</button>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>🎯 إضافة موقع جديد</h3>
+    <input type="text" id="siteName" placeholder="اسم الموقع">
+    <input type="url" id="siteUrl" placeholder="لينك الموقع (https://...)">
+    <button id="addBtn">🚀 إضافة</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// AUDIO ENGINE — ضع ملفات الصوت في فولدر sounds/
+// ══════════════════════════════════════════════════
+// الأسماء المطلوبة:
+//   sounds/grenade.mp3   ← صوت الـ Boom Kit
+//   sounds/satchel.mp3   ← صوت الـ Satchel
+//   sounds/paintbot.mp3  ← صوت الـ Paintbot
+//   sounds/ult.mp3       ← صوت الـ Showstopper
+
+function playSound(file, volume) {
+  const audio = new Audio('sounds/' + file);
+  audio.volume = volume !== undefined ? volume : 1.0;
+  audio.play().catch(() => {});
+}
+
+function playGrenade()  { playSound('grenade.mp3',  1.0); }
+function playSatchel()  { playSound('satchel.mp3',  0.9); }
+function playPaintbot() { playSound('paintbot.mp3', 0.85); }
+function playUlt()      { playSound('ult.mp3',      1.0); }
+
+// ══════════════════════════════════════════════════
+// CANVAS FX ENGINE
+// ══════════════════════════════════════════════════
+const canvas = document.getElementById('fx-canvas');
+const ctx2 = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const particles = [];
+
+function addParticles(x, y, count, config) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = config.minSpeed + Math.random() * config.speedRange;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - (config.upBias || 0),
+      life: 1,
+      decay: config.minDecay + Math.random() * config.decayRange,
+      size: config.minSize + Math.random() * config.sizeRange,
+      color: config.colors[Math.floor(Math.random() * config.colors.length)],
+      type: config.type || 'circle',
+      gravity: config.gravity || 0.15,
+      trail: config.trail || false,
+      px: x, py: y
+    });
+  }
+}
+
+function drawParticles() {
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    if (p.life <= 0) { particles.splice(i, 1); continue; }
+    ctx2.save();
+    ctx2.globalAlpha = p.life;
+    if (p.type === 'spark') {
+      ctx2.strokeStyle = p.color;
+      ctx2.lineWidth = p.size * 0.4;
+      ctx2.beginPath();
+      ctx2.moveTo(p.px, p.py);
+      ctx2.lineTo(p.x, p.y);
+      ctx2.stroke();
+    } else if (p.type === 'smoke') {
+      const grad = ctx2.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * (2 - p.life));
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(1, 'transparent');
+      ctx2.fillStyle = grad;
+      ctx2.beginPath();
+      ctx2.arc(p.x, p.y, p.size * (2 - p.life + 0.5), 0, Math.PI * 2);
+      ctx2.fill();
+    } else {
+      ctx2.fillStyle = p.color;
+      ctx2.beginPath();
+      if (p.type === 'square') {
+        ctx2.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+      } else {
+        ctx2.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx2.fill();
+      }
+    }
+    ctx2.restore();
+    p.px = p.x; p.py = p.y;
+    p.x += p.vx; p.y += p.vy;
+    p.vy += p.gravity;
+    p.vx *= 0.96; p.life -= p.decay;
+  }
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// GRENADE EXPLOSION FX
+function grenadeExplosion(x, y) {
+  // Shockwave ring
+  const ring = {x, y, r: 5, maxR: 120, alpha: 1};
+  function drawRing() {
+    if (ring.alpha <= 0) return;
+    ctx2.save();
+    ctx2.strokeStyle = `rgba(255,180,50,${ring.alpha})`;
+    ctx2.lineWidth = 3;
+    ctx2.beginPath();
+    ctx2.arc(ring.x, ring.y, ring.r, 0, Math.PI * 2);
+    ctx2.stroke();
+    ctx2.restore();
+    ring.r += 8; ring.alpha -= 0.06;
+    requestAnimationFrame(drawRing);
+  }
+  drawRing();
+
+  // Fire particles
+  addParticles(x, y, 30, {
+    colors: ['#ff4500','#ff8c00','#ffd700','#ff6b35','#ff0000'],
+    minSpeed: 3, speedRange: 8, upBias: 4,
+    minDecay: 0.025, decayRange: 0.03,
+    minSize: 4, sizeRange: 8,
+    gravity: 0.2, type: 'circle'
+  });
+  // Sparks
+  addParticles(x, y, 20, {
+    colors: ['#ffffff','#ffff00','#ff8c00'],
+    minSpeed: 5, speedRange: 10, upBias: 2,
+    minDecay: 0.04, decayRange: 0.04,
+    minSize: 1.5, sizeRange: 2,
+    gravity: 0.3, type: 'spark'
+  });
+  // Debris squares
+  addParticles(x, y, 12, {
+    colors: ['#8b4513','#666','#444','#ff4500'],
+    minSpeed: 2, speedRange: 6, upBias: 3,
+    minDecay: 0.015, decayRange: 0.02,
+    minSize: 3, sizeRange: 5,
+    gravity: 0.4, type: 'square'
+  });
+  // Smoke
+  addParticles(x, y, 8, {
+    colors: ['rgba(80,80,80,0.5)','rgba(60,60,60,0.4)'],
+    minSpeed: 1, speedRange: 2, upBias: 3,
+    minDecay: 0.008, decayRange: 0.01,
+    minSize: 15, sizeRange: 20,
+    gravity: -0.05, type: 'smoke'
+  });
+}
+
+// SATCHEL FX
+function satchelExplosion(x, y) {
+  addParticles(x, y, 15, {
+    colors: ['#ff4655','#ff8800','#ffcc00'],
+    minSpeed: 2, speedRange: 6, upBias: 6,
+    minDecay: 0.03, decayRange: 0.03,
+    minSize: 3, sizeRange: 6,
+    gravity: 0.1, type: 'circle'
+  });
+  addParticles(x, y, 8, {
+    colors: ['rgba(255,70,85,0.5)'],
+    minSpeed: 1, speedRange: 2, upBias: 4,
+    minDecay: 0.01, decayRange: 0.01,
+    minSize: 12, sizeRange: 18,
+    gravity: -0.08, type: 'smoke'
+  });
+}
+
+// PAINTBOT FX (mini explosion)
+function paintbotExplosion(x, y) {
+  addParticles(x, y, 25, {
+    colors: ['#ff4655','#ff8800','#ffcc00','#ff0080','#00ffff'],
+    minSpeed: 4, speedRange: 8, upBias: 2,
+    minDecay: 0.03, decayRange: 0.04,
+    minSize: 3, sizeRange: 6,
+    gravity: 0.25, type: 'circle'
+  });
+  addParticles(x, y, 10, {
+    colors: ['#fff','#ffcc00'],
+    minSpeed: 5, speedRange: 10,
+    minDecay: 0.05, decayRange: 0.05,
+    minSize: 1, sizeRange: 2,
+    gravity: 0.35, type: 'spark'
+  });
+}
+
+// ULT MEGA EXPLOSION
+function ultExplosion() {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  addParticles(cx, cy, 80, {
+    colors: ['#ff4500','#ff8c00','#ffd700','#ff6b35','#ff0000','#ff4655','#ffffff'],
+    minSpeed: 5, speedRange: 18, upBias: 5,
+    minDecay: 0.012, decayRange: 0.02,
+    minSize: 5, sizeRange: 12,
+    gravity: 0.3, type: 'circle'
+  });
+  addParticles(cx, cy, 40, {
+    colors: ['#fff','#ffff00','#ff8c00'],
+    minSpeed: 8, speedRange: 20, upBias: 3,
+    minDecay: 0.02, decayRange: 0.03,
+    minSize: 1, sizeRange: 3,
+    gravity: 0.4, type: 'spark'
+  });
+  addParticles(cx, cy, 20, {
+    colors: ['rgba(100,80,60,0.6)','rgba(80,60,40,0.5)'],
+    minSpeed: 2, speedRange: 5, upBias: 4,
+    minDecay: 0.005, decayRange: 0.008,
+    minSize: 25, sizeRange: 40,
+    gravity: -0.06, type: 'smoke'
+  });
+  // Multiple rings
+  [0, 80, 180].forEach((delay, ri) => {
+    setTimeout(() => {
+      const ring2 = {x: cx, y: cy + ri * 20, r: 10, maxR: 300 - ri * 50, alpha: 1};
+      function dr() {
+        if (ring2.alpha <= 0) return;
+        ctx2.save();
+        ctx2.strokeStyle = `rgba(255,${100 + ri * 50},0,${ring2.alpha})`;
+        ctx2.lineWidth = 4 - ri;
+        ctx2.beginPath();
+        ctx2.arc(ring2.x, ring2.y, ring2.r, 0, Math.PI * 2);
+        ctx2.stroke();
+        ctx2.restore();
+        ring2.r += 12; ring2.alpha -= 0.04;
+        requestAnimationFrame(dr);
+      }
+      dr();
+    }, delay);
+  });
+}
+
+// ══════════════════════════════════════════════════
+// FLASH & SHAKE
+// ══════════════════════════════════════════════════
+function flash(color = 'rgba(255,120,0,0.55)', dur = 100) {
+  const f = document.getElementById('flash');
+  f.style.background = `radial-gradient(circle,${color},transparent 60%)`;
+  f.style.opacity = '1';
+  setTimeout(() => f.style.opacity = '0', dur);
+}
+function shake() {
+  document.body.classList.remove('shake');
+  void document.body.offsetWidth;
+  document.body.classList.add('shake');
+  setTimeout(() => document.body.classList.remove('shake'), 520);
+}
+
+// ══════════════════════════════════════════════════
+// CROSSHAIR
+// ══════════════════════════════════════════════════
+const xhair = document.getElementById('crosshair');
+document.addEventListener('mousemove', e => {
+  xhair.style.left = e.clientX + 'px';
+  xhair.style.top = e.clientY + 'px';
+});
+
+// ══════════════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════════════
+setInterval(() => {
+  document.getElementById('clock').innerText = new Date().toLocaleTimeString('ar-EG');
+}, 1000);
+document.getElementById('clock').innerText = new Date().toLocaleTimeString('ar-EG');
+
+// ══════════════════════════════════════════════════
+// GRENADE — Link Click
+// ══════════════════════════════════════════════════
+
+// Animated grenade projectile
+function throwGrenade(fromX, fromY, toX, toY, callback) {
+  const el = document.createElement('div');
+  el.style.cssText = `
+    position:fixed;z-index:9960;pointer-events:none;
+    left:${fromX}px;top:${fromY}px;
+    width:18px;height:18px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#8B7355,#4a3728);
+    border:2px solid #6B5A40;
+    box-shadow:0 0 6px rgba(255,150,0,0.6);
+    transition:none;
+  `;
+  document.body.appendChild(el);
+
+  const startTime = performance.now();
+  const dur = 400; // ms
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const arcH = -150;
+
+  function animGrenade(now) {
+    const t = Math.min((now - startTime) / dur, 1);
+    const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const x = fromX + dx * t;
+    const y = fromY + dy * t + arcH * Math.sin(Math.PI * t);
+    const rot = t * 540;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`;
+    if (t < 1) {
+      requestAnimationFrame(animGrenade);
+    } else {
+      el.remove();
+      callback();
+    }
+  }
+  requestAnimationFrame(animGrenade);
+}
+
+document.addEventListener('click', e => {
+  const link = e.target.closest('.link-item');
+  if (!link) return;
+  e.preventDefault();
+  const href = link.href;
+  const rect = link.getBoundingClientRect();
+  const toX = rect.left + rect.width / 2;
+  const toY = rect.top + rect.height / 2;
+  const fromX = window.innerWidth * 0.15;
+  const fromY = window.innerHeight * 0.85;
+
+  throwGrenade(fromX, fromY, toX, toY, () => {
+    playGrenade();
+    grenadeExplosion(toX, toY);
+    flash('rgba(255,120,0,0.6)', 120);
+    shake();
+    setTimeout(() => window.open(href, '_blank'), 400);
+  });
+});
+
+// ══════════════════════════════════════════════════
+// SATCHEL — Add Website
+// ══════════════════════════════════════════════════
+const modal = document.getElementById('modal');
+document.getElementById('openModal').onclick = () => modal.style.display = 'flex';
+modal.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+
+function animateSatchel(fromX, fromY, toX, toY, onMid, onEnd) {
+  const el = document.createElement('div');
+  // Satchel SVG-like box
+  el.innerHTML = `<svg width="32" height="26" viewBox="0 0 32 26">
+    <rect x="2" y="8" width="28" height="16" rx="3" fill="#ff8800" stroke="#ff4655" stroke-width="1.5"/>
+    <rect x="8" y="3" width="16" height="8" rx="2" fill="#cc5500"/>
+    <rect x="13" y="1" width="6" height="5" rx="1" fill="#ff4655"/>
+    <circle cx="16" cy="16" r="3" fill="#ffcc00"/>
+    <line x1="2" y1="8" x2="30" y2="8" stroke="#ff4655" stroke-width="1"/>
+  </svg>`;
+  el.style.cssText = `position:fixed;z-index:9965;pointer-events:none;left:${fromX}px;top:${fromY}px;`;
+  document.body.appendChild(el);
+
+  const startTime = performance.now();
+  const dur = 600;
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  let midCalled = false;
+
+  function anim(now) {
+    const t = Math.min((now - startTime) / dur, 1);
+    const x = fromX + dx * t;
+    const arcPeak = -200;
+    const y = fromY + dy * t + arcPeak * Math.sin(Math.PI * t);
+    const rot = t * 720;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.transform = `translate(-50%,-50%) rotate(${rot}deg) scale(${0.8 + Math.sin(Math.PI * t) * 0.4})`;
+    if (t >= 0.5 && !midCalled) { midCalled = true; onMid(x, y); }
+    if (t < 1) requestAnimationFrame(anim);
+    else { el.remove(); onEnd(toX, toY); }
+  }
+  requestAnimationFrame(anim);
+}
+
+function makeLinkEl(name, url, hostname) {
+  const link = document.createElement('a');
+  link.className = 'link-item';
+  link.href = url;
+  link.target = '_blank';
+  link.innerHTML = `
+    <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=${hostname}&sz=32" onerror="this.style.display='none'" alt="">
+    <span class="link-name">${name}</span>
+    <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+    <span>↗</span>
+  `;
+  return link;
+}
+
+function addWebsite() {
+  const name = document.getElementById('siteName').value.trim();
+  const url  = document.getElementById('siteUrl').value.trim();
+  if (!name || !url) { alert('اكتب البيانات كاملة!'); return; }
+
+  let hostname = '';
+  try { hostname = new URL(url).hostname; } catch (e) {}
+
+  // Get or create the custom card
+  const customCardId = 'custom-links';
+  let customCard = document.getElementById(customCardId);
+  if (!customCard) {
+    customCard = document.createElement('div');
+    customCard.className = 'card';
+    customCard.id = customCardId;
+    customCard.innerHTML = `<h2>⭐ مواقعك</h2><div class="links"></div>`;
+    document.getElementById('grid').appendChild(customCard);
+  }
+
+  const linksContainer = customCard.querySelector('.links');
+  const existingLinks  = linksContainer.querySelectorAll('.link-item');
+  const lastLink       = existingLinks[existingLinks.length - 1] || null;
+
+  modal.style.display = 'none';
+  document.getElementById('siteName').value = '';
+  document.getElementById('siteUrl').value  = '';
+
+  // -- Satchel flies from the + button area to under the last link --
+  const btn  = document.getElementById('openModal');
+  const btnR = btn.getBoundingClientRect();
+
+  // Where the satchel lands: just below the last link (or card bottom if empty)
+  const targetEl   = lastLink || customCard;
+  const targetRect = targetEl.getBoundingClientRect();
+  const landX = targetRect.left + targetRect.width  / 2;
+  const landY = targetRect.bottom;
+
+  playSatchel();
+
+  animateSatchel(btnR.left + 32, btnR.top + 32, landX, landY,
+    (mx, my) => { satchelExplosion(mx, my); },      // mid-arc smoke
+    (ex, ey) => {
+      // === Satchel lands ===
+      satchelExplosion(ex, ey);
+      flash('rgba(255,136,0,0.35)', 80);
+
+      // 1. Lift the last link UP (just visually, keep it in DOM)
+      if (lastLink) {
+        lastLink.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.45s';
+        lastLink.style.transform  = 'translateY(-70px)';
+        lastLink.style.opacity    = '0.6';
+
+        // 2. Insert new link BELOW (at the bottom) while old is flying up
+        const newLink = makeLinkEl(name, url, hostname);
+        newLink.style.opacity   = '0';
+        newLink.style.transform = 'translateY(40px)';
+        newLink.style.transition = 'none';
+        linksContainer.appendChild(newLink);
+
+        // 3. Bring old link back down to its original position, slide new one up
+        setTimeout(() => {
+          lastLink.style.transform = 'translateY(0)';
+          lastLink.style.opacity   = '1';
+
+          // slight delay then reveal new link with slide-up
+          setTimeout(() => {
+            newLink.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.45s';
+            newLink.style.transform  = 'translateY(0)';
+            newLink.style.opacity    = '1';
+          }, 80);
+
+          // clean up inline styles after animation
+          setTimeout(() => {
+            lastLink.style.transition = '';
+            lastLink.style.transform  = '';
+            lastLink.style.opacity    = '';
+            newLink.style.transition  = '';
+            newLink.style.transform   = '';
+            newLink.style.opacity     = '';
+            saveLinks();
+          }, 550);
+        }, 450);
+
+      } else {
+        // No existing link — just slide new one in
+        const newLink = makeLinkEl(name, url, hostname);
+        newLink.classList.add('link-new');
+        linksContainer.appendChild(newLink);
+        setTimeout(() => newLink.classList.remove('link-new'), 700);
+        saveLinks();
+      }
+    }
+  );
+}
+
+document.getElementById('addBtn').onclick = addWebsite;
+
+// ══════════════════════════════════════════════════
+// PAINTBOT — Delete Link
+// ══════════════════════════════════════════════════
+function deleteLink(e, btn) {
+  e.preventDefault();
+  e.stopPropagation();
+  const linkEl = btn.closest('.link-item');
+  const rect = linkEl.getBoundingClientRect();
+  const targetX = rect.left + rect.width / 2;
+  const targetY = rect.top + rect.height / 2;
+
+  // Spawn paintbot from left edge, runs to target
+  spawnPaintbot(targetX, targetY, () => {
+    playGrenade(); // mini explosion sound for paintbot
+    paintbotExplosion(targetX, targetY);
+    flash('rgba(255,70,85,0.45)', 80);
+    linkEl.style.transition = 'all 0.3s';
+    linkEl.style.opacity = '0';
+    linkEl.style.transform = 'scale(0.5)';
+    setTimeout(() => {
+      linkEl.remove();
+      saveLinks();
+    }, 300);
+  });
+}
+
+function spawnPaintbot(toX, toY, onArrive) {
+  // Draw an animated paintbot
+  const bot = document.createElement('canvas');
+  bot.width = 48; bot.height = 36;
+  bot.style.cssText = `position:fixed;z-index:9970;pointer-events:none;left:-60px;top:${toY - 18}px;`;
+  document.body.appendChild(bot);
+
+  const bc = bot.getContext('2d');
+  let frame = 0;
+
+  function drawBot(legUp) {
+    bc.clearRect(0, 0, 48, 36);
+    // Body
+    bc.fillStyle = '#ff4655';
+    bc.beginPath(); bc.roundRect(6, 8, 28, 20, 4); bc.fill();
+    // Head bump
+    bc.fillStyle = '#ff8800';
+    bc.beginPath(); bc.roundRect(16, 2, 14, 10, 3); bc.fill();
+    // Eye
+    bc.fillStyle = '#00ffff';
+    bc.beginPath(); bc.arc(23, 7, 3, 0, Math.PI * 2); bc.fill();
+    bc.fillStyle = '#fff';
+    bc.beginPath(); bc.arc(24, 6, 1.2, 0, Math.PI * 2); bc.fill();
+    // Legs
+    const legY = legUp ? 26 : 28;
+    bc.fillStyle = '#cc3300';
+    bc.fillRect(10, legY, 6, 8);
+    bc.fillRect(24, legUp ? 28 : 26, 6, 8);
+    // Wheels
+    bc.fillStyle = '#333';
+    bc.beginPath(); bc.arc(13, legY + 8, 4, 0, Math.PI * 2); bc.fill();
+    bc.beginPath(); bc.arc(27, (legUp ? 28 : 26) + 8, 4, 0, Math.PI * 2); bc.fill();
+    // Bomb on top
+    bc.fillStyle = '#222';
+    bc.beginPath(); bc.arc(18, 2, 5, 0, Math.PI * 2); bc.fill();
+    bc.fillStyle = '#ffcc00';
+    bc.fillRect(17, -3, 2, 5);
+  }
+
+  const startTime = performance.now();
+  const startX = -60;
+  const dur = Math.min(800, Math.max(400, toX * 0.6));
+
+  function animBot(now) {
+    const t = Math.min((now - startTime) / dur, 1);
+    const x = startX + (toX - 24 - startX) * t;
+    bot.style.left = x + 'px';
+    frame++;
+    drawBot(frame % 8 < 4);
+    if (t < 1) requestAnimationFrame(animBot);
+    else {
+      playPaintbot();
+      bot.remove();
+      onArrive();
+    }
+  }
+
+  drawBot(false);
+  playPaintbot();
+  requestAnimationFrame(animBot);
+}
+
+// ══════════════════════════════════════════════════
+// ULT — Search (Showstopper)
+// ══════════════════════════════════════════════════
+document.getElementById('search').addEventListener('keypress', function (e) {
+  if (e.key !== 'Enter' || !this.value) return;
+  const query = this.value;
+
+  // Screen destruction effect
+  playUlt();
+
+  // Rocket animation across screen
+  const rocketEl = document.createElement('div');
+  rocketEl.style.cssText = `
+    position:fixed;z-index:9975;pointer-events:none;
+    left:-80px;top:${window.innerHeight * 0.45}px;
+    width:60px;height:22px;
+  `;
+  rocketEl.innerHTML = `<svg width="60" height="22" viewBox="0 0 60 22">
+    <polygon points="0,11 50,0 50,22" fill="#ff4655"/>
+    <polygon points="50,6 60,11 50,16" fill="#ff8800"/>
+    <rect x="0" y="8" width="15" height="6" fill="#cc2233"/>
+    <circle cx="42" cy="11" r="4" fill="#ffcc00" opacity="0.9"/>
+  </svg>`;
+  document.body.appendChild(rocketEl);
+
+  const ultStart = performance.now();
+  const ultDur = 500;
+  function animRocket(now) {
+    const t = Math.min((now - ultStart) / ultDur, 1);
+    rocketEl.style.left = (-80 + (window.innerWidth + 160) * t) + 'px';
+    rocketEl.style.transform = `translateY(${Math.sin(t * Math.PI * 3) * 8}px)`;
+    // Exhaust particles
+    if (Math.random() < 0.6) {
+      addParticles(
+        parseFloat(rocketEl.style.left),
+        parseFloat(rocketEl.style.top) + 11,
+        2, {
+          colors: ['#ff8800','#ff4500','#ffcc00'],
+          minSpeed: 1, speedRange: 3, upBias: -1,
+          minDecay: 0.06, decayRange: 0.06,
+          minSize: 2, sizeRange: 4,
+          gravity: 0.05, type: 'circle'
+        }
+      );
+    }
+    if (t < 1) requestAnimationFrame(animRocket);
+    else {
+      rocketEl.remove();
+      // Mega explosion
+      ultExplosion();
+      // Screen flash sequence
+      const uf = document.getElementById('ult-flash');
+      const uo = document.getElementById('ult-overlay');
+      uf.style.opacity = '1';
+      uo.style.opacity = '1';
+      shake();
+      setTimeout(() => { uf.style.opacity = '0'; }, 150);
+      // Screen crack / glitch effect
+      let glitchCount = 0;
+      const glitchInt = setInterval(() => {
+        uf.style.opacity = Math.random() > 0.5 ? '0.4' : '0';
+        document.body.style.transform = `translate(${(Math.random() - 0.5) * 10}px,${(Math.random() - 0.5) * 6}px)`;
+        if (++glitchCount > 8) {
+          clearInterval(glitchInt);
+          uf.style.opacity = '0';
+          uo.style.opacity = '0';
+          document.body.style.transform = '';
+          window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+      }, 80);
+    }
+  }
+  requestAnimationFrame(animRocket);
+});
+
+// ══════════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════════
+function saveLinks() {
+  const card = document.getElementById('custom-links');
+  if (!card) { localStorage.removeItem('marwanLinks'); return; }
+  const links = [];
+  card.querySelectorAll('.link-item').forEach(a => {
+    links.push({ name: a.querySelector('.link-name').textContent, url: a.href });
+  });
+  localStorage.setItem('marwanLinks', JSON.stringify(links));
+}
+
+function loadLinks() {
+  const saved = JSON.parse(localStorage.getItem('marwanLinks') || 'null');
+  if (!saved || !saved.length) return;
+  const card = document.createElement('div');
+  card.className = 'card'; card.id = 'custom-links';
+  card.innerHTML = `<h2>⭐ مواقعك</h2><div class="links"></div>`;
+  document.getElementById('grid').appendChild(card);
+  const container = card.querySelector('.links');
+  saved.forEach(site => {
+    let hostname = '';
+    try { hostname = new URL(site.url).hostname; } catch (err) {}
+    const link = document.createElement('a');
+    link.className = 'link-item';
+    link.href = site.url; link.target = '_blank';
+    link.innerHTML = `
+      <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=${hostname}&sz=32" onerror="this.style.display='none'" alt="">
+      <span class="link-name">${site.name}</span>
+      <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+      <span>↗</span>
+    `;
+    container.appendChild(link);
+  });
+}
+
+loadLinks();
+</script>
+</body>
+</html>
