@@ -779,7 +779,6 @@ function deleteLink(e, btn) {
 
   // Spawn paintbot from left edge, runs to target
   spawnPaintbot(targetX, targetY, () => {
-    playGrenade(); // mini explosion sound for paintbot
     paintbotExplosion(targetX, targetY);
     flash('rgba(255,70,85,0.45)', 80);
     linkEl.style.transition = 'all 0.3s';
