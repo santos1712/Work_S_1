@@ -14,6 +14,10 @@
     }
 
     body {
+      background-image: linear-gradient(rgba(9,0,20,0.82), rgba(9,0,20,0.92)), url('https://images.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt5c3a31f0f4a4c8db/5eb26f538c0b6e1296d1f70e/Raze_KeyArt.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
       min-height: 100vh;
       background: radial-gradient(circle at top, #1d0033, #090014 60%);
       overflow-x: hidden;
@@ -152,6 +156,7 @@
     }
 
     .links a {
+      position: relative;
       text-decoration: none;
       color: white;
       padding: 12px 14px;
@@ -161,6 +166,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .links a img {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      margin-left: 10px;
     }
 
     .links a:hover {
@@ -262,11 +274,12 @@
   </style>
 </head>
 <body>
+  <div class="raze-bg"></div>
 
   <div class="container">
 
     <div class="top">
-      <div class="logo">⚡ MARWAN SANTOS</div>
+      <div class="logo">⚡ Marwan Santos</div>
       <div class="clock" id="clock">00:00:00</div>
     </div>
 
@@ -279,34 +292,34 @@
       <div class="card">
         <h2>🎮 Gaming</h2>
         <div class="links">
-          <a href="https://store.steampowered.com" target="_blank">Steam <span>↗</span></a>
-          <a href="https://playvalorant.com" target="_blank">Valorant <span>↗</span></a>
-          <a href="https://store.epicgames.com" target="_blank">Epic Games <span>↗</span></a>
+          <a class="link-item" href="https://store.steampowered.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.steampowered.com&sz=32"><span class="link-name">Steam</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
+          <a class="link-item" href="https://playvalorant.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=playvalorant.com&sz=32"><span class="link-name">Valorant</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
+          <a class="link-item" href="https://store.epicgames.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.epicgames.com&sz=32"><span class="link-name">Epic Games</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
         </div>
       </div>
 
       <div class="card">
         <h2>💻 Coding</h2>
         <div class="links">
-          <a href="https://github.com" target="_blank">GitHub <span>↗</span></a>
-          <a href="https://workers.cloudflare.com" target="_blank">Cloudflare <span>↗</span></a>
-          <a href="https://replit.com" target="_blank">Replit <span>↗</span></a>
+          <a class="link-item" href="https://github.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=32"><span class="link-name">GitHub</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
+          <a class="link-item" href="https://workers.cloudflare.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=cloudflare.com&sz=32"><span class="link-name">Cloudflare</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
+          <a class="link-item" href="https://replit.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=replit.com&sz=32"><span class="link-name">Replit</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
         </div>
       </div>
 
       <div class="card">
         <h2>🎵 Music</h2>
         <div class="links">
-          <a href="https://spotify.com" target="_blank">Spotify <span>↗</span></a>
-          <a href="https://youtube.com" target="_blank">YouTube <span>↗</span></a>
-          <a href="https://soundcloud.com" target="_blank">SoundCloud <span>↗</span></a>
+          <a class="link-item" href="https://spotify.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=spotify.com&sz=32"><span class="link-name">Spotify</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
+          <a class="link-item" href="https://youtube.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=youtube.com&sz=32"><span class="link-name">YouTube</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
+          <a class="link-item" href="https://soundcloud.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=soundcloud.com&sz=32"><span class="link-name">SoundCloud</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
         </div>
       </div>
 
     </div>
 
     <div class="footer">
-      البشمبرمج⚡
+      Marwan Santos
     </div>
 
   </div>
@@ -351,6 +364,15 @@
       }
     }
 
+    function getFavicon(url) {
+      try {
+        const domain = new URL(url).hostname;
+        return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      } catch {
+        return '';
+      }
+    }
+
     function addWebsite() {
       const name = document.getElementById('siteName').value;
       const url = document.getElementById('siteUrl').value;
@@ -381,7 +403,31 @@
       const link = document.createElement('a');
       link.href = url;
       link.target = '_blank';
-      link.innerHTML = `${name} <span>↗</span>`;
+      const icon = getFavicon(url);
+      link.innerHTML = `<div style="display:flex;align-items:center;gap:10px;"><img src="${icon}">${name}</div> <span>💣</span>`;
+
+      link.addEventListener('click', () => {
+        const sound = document.getElementById('boomSound');
+        sound.currentTime = 0;
+        sound.play();
+
+        document.body.animate([
+          { transform: 'translateX(0px)' },
+          { transform: 'translateX(-8px)' },
+          { transform: 'translateX(8px)' },
+          { transform: 'translateX(0px)' }
+        ], {
+          duration: 300
+        });
+      });
+
+      link.animate([
+        { transform: 'translateY(120px)', opacity: 0 },
+        { transform: 'translateY(0px)', opacity: 1 }
+      ], {
+        duration: 600,
+        easing: 'ease-out'
+      });
 
       linksContainer.appendChild(link);
 
@@ -409,6 +455,21 @@
       localStorage.setItem('marwanLinks', JSON.stringify(links));
     }
 
+    function deleteLink(e, btn) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const link = btn.closest('a');
+      link.style.transition = '0.3s';
+      link.style.opacity = '0';
+      link.style.transform = 'scale(0.7)';
+
+      setTimeout(() => {
+        link.remove();
+        saveLinks();
+      }, 300);
+    }
+
     function loadLinks() {
       const saved = JSON.parse(localStorage.getItem('marwanLinks'));
 
@@ -431,13 +492,135 @@
         const link = document.createElement('a');
         link.href = site.url;
         link.target = '_blank';
-        link.innerHTML = `${site.name} <span>↗</span>`;
+        const icon = getFavicon(site.url);
+        link.innerHTML = `<div style="display:flex;align-items:center;gap:10px;"><img src="${icon}">${site.name}</div> <span>💣</span>`;
+
+        link.addEventListener('click', () => {
+          const sound = document.getElementById('boomSound');
+          sound.currentTime = 0;
+          sound.play();
+
+          document.body.animate([
+            { transform: 'translateX(0px)' },
+            { transform: 'translateX(-8px)' },
+            { transform: 'translateX(8px)' },
+            { transform: 'translateX(0px)' }
+          ], {
+            duration: 300
+          });
+        });
         container.appendChild(link);
       });
     }
 
     loadLinks();
 
+  </script>
+
+  <audio id="boomSound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3"></audio>
+  <audio id="ultSound" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+  <audio id="satchelSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+  <img id="razeCharacter" src="https://static.wikia.nocookie.net/valorant/images/8/8f/Raze_Artwork_Full.png" alt="Raze">
+
+  <style>
+    #razeCharacter {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 90vh;
+      opacity: 0.18;
+      z-index: -2;
+      pointer-events: none;
+      filter: drop-shadow(0 0 40px rgba(255,140,0,0.4));
+    }
+
+    .explode {
+      animation: explode 0.6s ease;
+    }
+
+    @keyframes explode {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.08) rotate(-2deg); }
+      100% { transform: scale(1); }
+    }
+
+    .rise {
+      animation: rise 0.7s ease;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(120px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+
+  <script>
+    function playBoomEffect() {
+      document.body.classList.add('explode');
+      const sound = document.getElementById('boomSound');
+      sound.currentTime = 0;
+      sound.play();
+
+      setTimeout(() => {
+        document.body.classList.remove('explode');
+      }, 600);
+    }
+
+    function playUltEffect() {
+      const sound = document.getElementById('ultSound');
+      sound.currentTime = 0;
+      sound.play();
+
+      document.body.classList.add('explode');
+
+      setTimeout(() => {
+        document.body.classList.remove('explode');
+      }, 900);
+    }
+
+    function playSatchelEffect(card) {
+      const sound = document.getElementById('satchelSound');
+      sound.currentTime = 0;
+      sound.play();
+
+      card.classList.add('rise');
+    }
+
+    document.querySelectorAll('.links a').forEach(link => {
+      link.addEventListener('click', playBoomEffect);
+    });
+
+    document.getElementById('search').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        playUltEffect();
+      }
+    });
+
+    const originalAddWebsite = addWebsite;
+
+    addWebsite = function() {
+      originalAddWebsite();
+
+      const customCard = document.getElementById('custom-links');
+      if (!customCard) return;
+
+      const links = customCard.querySelectorAll('a');
+      const latest = links[links.length - 1];
+
+      if (latest) {
+        playSatchelEffect(latest);
+      }
+
+      latest?.addEventListener('click', playBoomEffect);
+    }
   </script>
 
 </body>
