@@ -1,627 +1,540 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marwan Santos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Cairo', sans-serif;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Marwan Santos</title>
 
-    body {
-      background-image: linear-gradient(rgba(9,0,20,0.82), rgba(9,0,20,0.92)), url('https://images.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt5c3a31f0f4a4c8db/5eb26f538c0b6e1296d1f70e/Raze_KeyArt.png');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      min-height: 100vh;
-      background: radial-gradient(circle at top, #1d0033, #090014 60%);
-      overflow-x: hidden;
-      color: white;
-      padding: 30px;
-      position: relative;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    body::before {
-      content: '';
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      background: rgba(255, 0, 200, 0.2);
-      filter: blur(120px);
-      top: -150px;
-      right: -150px;
-      z-index: -1;
-    }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Cairo',sans-serif;
+}
 
-    body::after {
-      content: '';
-      position: fixed;
-      width: 400px;
-      height: 400px;
-      background: rgba(0, 255, 255, 0.15);
-      filter: blur(120px);
-      bottom: -120px;
-      left: -120px;
-      z-index: -1;
-    }
+body{
+  min-height:100vh;
+  background:radial-gradient(circle at top,#1d0033,#090014 60%);
+  overflow-x:hidden;
+  color:white;
+  padding:30px;
+  position:relative;
+}
 
-    .container {
-      max-width: 1300px;
-      margin: auto;
-    }
+body::before{
+  content:'';
+  position:fixed;
+  width:500px;
+  height:500px;
+  background:rgba(255,0,200,0.18);
+  filter:blur(120px);
+  top:-150px;
+  right:-150px;
+  z-index:-1;
+}
 
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 40px;
-    }
+body::after{
+  content:'';
+  position:fixed;
+  width:400px;
+  height:400px;
+  background:rgba(0,255,255,0.12);
+  filter:blur(120px);
+  bottom:-120px;
+  left:-120px;
+  z-index:-1;
+}
 
-    .logo {
-      font-size: 40px;
-      font-weight: 700;
-      color: #fff;
-      text-shadow:
-        0 0 10px #ff00ff,
-        0 0 20px #ff00ff,
-        0 0 40px #ff00ff;
-    }
+.container{
+  max-width:1200px;
+  margin:auto;
+}
 
-    .clock {
-      font-size: 24px;
-      background: rgba(255,255,255,0.05);
-      padding: 15px 25px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(0,255,255,0.2);
-    }
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:20px;
+  margin-bottom:40px;
+}
 
-    .search-box {
-      margin-bottom: 35px;
-      display: flex;
-      justify-content: center;
-    }
+.logo{
+  font-size:38px;
+  font-weight:700;
+  text-shadow:
+    0 0 10px #ff00ff,
+    0 0 20px #ff00ff,
+    0 0 40px #ff00ff;
+}
 
-    .search-box input {
-      width: 100%;
-      max-width: 700px;
-      padding: 18px 25px;
-      border-radius: 20px;
-      border: none;
-      outline: none;
-      background: rgba(255,255,255,0.08);
-      color: white;
-      font-size: 18px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(255,0,255,0.25);
-      transition: 0.3s;
-    }
+.clock{
+  font-size:22px;
+  background:rgba(255,255,255,0.05);
+  padding:14px 22px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+}
 
-    .search-box input:focus {
-      transform: scale(1.02);
-      box-shadow: 0 0 30px rgba(0,255,255,0.35);
-    }
+.search-box{
+  margin-bottom:35px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 22px;
-    }
+.search-box input{
+  width:100%;
+  padding:18px 24px;
+  border:none;
+  outline:none;
+  border-radius:20px;
+  background:rgba(255,255,255,0.08);
+  color:white;
+  font-size:17px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 20px rgba(255,0,255,0.15);
+}
 
-    .card {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 25px;
-      padding: 25px;
-      backdrop-filter: blur(14px);
-      transition: 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:22px;
+}
 
-    .card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 0 30px rgba(255,0,255,0.3);
-    }
+.card{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:25px;
+  padding:24px;
+  backdrop-filter:blur(12px);
+  transition:0.3s;
+}
 
-    .card::before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 5px;
-      top: 0;
-      left: 0;
-      background: linear-gradient(90deg, #00ffff, #ff00ff);
-    }
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 0 25px rgba(255,0,255,0.2);
+}
 
-    .card h2 {
-      margin-bottom: 18px;
-      font-size: 22px;
-      color: #00ffff;
-      text-shadow: 0 0 10px rgba(0,255,255,0.5);
-    }
+.card h2{
+  margin-bottom:18px;
+  color:#00ffff;
+}
 
-    .links {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+.links{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
 
-    .links a {
-      position: relative;
-      text-decoration: none;
-      color: white;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.05);
-      transition: 0.25s;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+.link-item{
+  text-decoration:none;
+  color:white;
+  background:rgba(255,255,255,0.05);
+  padding:12px 14px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:0.25s;
+}
 
-    .links a img {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      margin-left: 10px;
-    }
+.link-item:hover{
+  background:rgba(0,255,255,0.12);
+}
 
-    .links a:hover {
-      background: rgba(0,255,255,0.15);
-      transform: translateX(-5px);
-      box-shadow: 0 0 15px rgba(0,255,255,0.25);
-    }
+.link-favicon{
+  width:20px;
+  height:20px;
+  border-radius:4px;
+}
 
-    .add-btn {
-      position: fixed;
-      bottom: 25px;
-      left: 25px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      font-size: 40px;
-      color: white;
-      background: linear-gradient(135deg, #ff00ff, #00ffff);
-      box-shadow:
-        0 0 20px rgba(255,0,255,0.6),
-        0 0 35px rgba(0,255,255,0.5);
-      transition: 0.3s;
-      z-index: 999;
-    }
+.link-name{
+  flex:1;
+}
 
-    .add-btn:hover {
-      transform: scale(1.1) rotate(90deg);
-    }
+.link-del{
+  background:none;
+  border:none;
+  color:#ff4d6d;
+  cursor:pointer;
+  font-size:14px;
+}
 
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.65);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+.add-btn{
+  position:fixed;
+  bottom:25px;
+  left:25px;
+  width:68px;
+  height:68px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  font-size:34px;
+  color:white;
+  background:linear-gradient(135deg,#ff00ff,#00ffff);
+  box-shadow:
+    0 0 20px rgba(255,0,255,0.5),
+    0 0 35px rgba(0,255,255,0.4);
+  transition:0.3s;
+}
 
-    .modal-content {
-      width: 90%;
-      max-width: 450px;
-      background: #120021;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 25px;
-      padding: 30px;
-      box-shadow: 0 0 40px rgba(255,0,255,0.3);
-    }
+.add-btn:hover{
+  transform:scale(1.1) rotate(90deg);
+}
 
-    .modal-content h3 {
-      margin-bottom: 20px;
-      color: #00ffff;
-      text-align: center;
-    }
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
 
-    .modal-content input {
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 15px;
-      border: none;
-      outline: none;
-      background: rgba(255,255,255,0.08);
-      color: white;
-    }
+.modal-content{
+  width:90%;
+  max-width:420px;
+  background:#120021;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:24px;
+  padding:28px;
+}
 
-    .modal-content button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 15px;
-      font-size: 16px;
-      cursor: pointer;
-      color: white;
-      background: linear-gradient(135deg, #ff00ff, #00ffff);
-    }
+.modal-content h3{
+  margin-bottom:18px;
+  text-align:center;
+  color:#00ffff;
+}
 
-    .footer {
-      text-align: center;
-      margin-top: 50px;
-      opacity: 0.6;
-    }
+.modal-content input{
+  width:100%;
+  padding:14px;
+  margin-bottom:14px;
+  border:none;
+  outline:none;
+  border-radius:14px;
+  background:rgba(255,255,255,0.08);
+  color:white;
+}
 
-    @media (max-width: 600px) {
-      .logo {
-        font-size: 28px;
-      }
+.modal-content button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ff00ff,#00ffff);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
 
-      .clock {
-        font-size: 18px;
-      }
+.footer{
+  text-align:center;
+  margin-top:50px;
+  opacity:0.5;
+}
 
-      .search-box input {
-        font-size: 16px;
-      }
-    }
-  </style>
+@keyframes slideUp{
+  from{
+    opacity:0;
+    transform:translateY(25px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.link-new{
+  animation:slideUp 0.35s ease;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="raze-bg"></div>
 
-  <div class="container">
+<div class="container">
 
-    <div class="top">
-      <div class="logo">⚡ Marwan Santos</div>
-      <div class="clock" id="clock">00:00:00</div>
+  <div class="top">
+    <div class="logo">⚡ Marwan Santos</div>
+    <div class="clock" id="clock">00:00:00</div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="search" placeholder="ابحث في جوجل...">
+  </div>
+
+  <div class="grid" id="grid">
+
+    <div class="card">
+      <h2>🎮 Gaming</h2>
+
+      <div class="links">
+
+        <a class="link-item" href="https://store.steampowered.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.steampowered.com&sz=32">
+          <span class="link-name">Steam</span>
+          <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+        </a>
+
+        <a class="link-item" href="https://playvalorant.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=playvalorant.com&sz=32">
+          <span class="link-name">Valorant</span>
+          <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+        </a>
+
+        <a class="link-item" href="https://store.epicgames.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.epicgames.com&sz=32">
+          <span class="link-name">Epic Games</span>
+          <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+        </a>
+
+      </div>
     </div>
 
-    <div class="search-box">
-      <input type="text" id="search" placeholder="ابحث في جوجل...">
-    </div>
+    <div class="card">
+      <h2>💻 Coding</h2>
 
-    <div class="grid" id="grid">
+      <div class="links">
 
-      <div class="card">
-        <h2>🎮 Gaming</h2>
-        <div class="links">
-          <a class="link-item" href="https://store.steampowered.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.steampowered.com&sz=32"><span class="link-name">Steam</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-          <a class="link-item" href="https://playvalorant.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=playvalorant.com&sz=32"><span class="link-name">Valorant</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-          <a class="link-item" href="https://store.epicgames.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=store.epicgames.com&sz=32"><span class="link-name">Epic Games</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-        </div>
+        <a class="link-item" href="https://github.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=32">
+          <span class="link-name">GitHub</span>
+          <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+        </a>
+
+        <a class="link-item" href="https://workers.cloudflare.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=cloudflare.com&sz=32">
+          <span class="link-name">Cloudflare</span>
+          <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+        </a>
+
+        <a class="link-item" href="https://replit.com" target="_blank">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=replit.com&sz=32">
+          <span class="link-name">Replit</span>
+          <button class="link-del" onclick="deleteLink(event,this)">✕</button>
+        </a>
+
       </div>
-
-      <div class="card">
-        <h2>💻 Coding</h2>
-        <div class="links">
-          <a class="link-item" href="https://github.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=32"><span class="link-name">GitHub</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-          <a class="link-item" href="https://workers.cloudflare.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=cloudflare.com&sz=32"><span class="link-name">Cloudflare</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-          <a class="link-item" href="https://replit.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=replit.com&sz=32"><span class="link-name">Replit</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>🎵 Music</h2>
-        <div class="links">
-          <a class="link-item" href="https://spotify.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=spotify.com&sz=32"><span class="link-name">Spotify</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-          <a class="link-item" href="https://youtube.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=youtube.com&sz=32"><span class="link-name">YouTube</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-          <a class="link-item" href="https://soundcloud.com" target="_blank"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=soundcloud.com&sz=32"><span class="link-name">SoundCloud</span><button class="link-del" onclick="deleteLink(event,this)">✕</button><span>↗</span></a>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="footer">
-      Marwan Santos
     </div>
 
   </div>
 
-  <button class="add-btn" id="openModal">+</button>
-
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <h3>إضافة موقع جديد</h3>
-      <input type="text" id="siteName" placeholder="اسم الموقع">
-      <input type="url" id="siteUrl" placeholder="لينك الموقع">
-      <button onclick="addWebsite()">إضافة</button>
-    </div>
+  <div class="footer">
+    Marwan Santos
   </div>
 
-  <script>
+</div>
 
-    function updateClock() {
-      const now = new Date();
-      const time = now.toLocaleTimeString('ar-EG');
-      document.getElementById('clock').innerText = time;
-    }
+<button class="add-btn" id="openModal">+</button>
 
-    setInterval(updateClock, 1000);
-    updateClock();
+<div class="modal" id="modal">
 
-    document.getElementById('search').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        window.location.href = `https://www.google.com/search?q=${this.value}`;
-      }
+  <div class="modal-content">
+    <h3>إضافة موقع جديد</h3>
+
+    <input type="text" id="siteName" placeholder="اسم الموقع">
+
+    <input type="url" id="siteUrl" placeholder="لينك الموقع">
+
+    <button onclick="addWebsite()">إضافة</button>
+  </div>
+
+</div>
+
+<script>
+
+function updateClock(){
+  document.getElementById('clock').innerText =
+    new Date().toLocaleTimeString('ar-EG');
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+document.getElementById('search').addEventListener('keypress',function(e){
+
+  if(e.key === 'Enter'){
+    window.location.href =
+      `https://www.google.com/search?q=${this.value}`;
+  }
+
+});
+
+const modal = document.getElementById('modal');
+
+document.getElementById('openModal').onclick = () => {
+  modal.style.display = 'flex';
+};
+
+modal.onclick = (e) => {
+  if(e.target === modal){
+    modal.style.display = 'none';
+  }
+};
+
+function getHostname(url){
+
+  try{
+    return new URL(url).hostname;
+  }
+
+  catch{
+    return '';
+  }
+
+}
+
+function createLink(name,url){
+
+  const hostname = getHostname(url);
+
+  const link = document.createElement('a');
+
+  link.className = 'link-item';
+  link.href = url;
+  link.target = '_blank';
+
+  link.innerHTML = `
+    <img class="link-favicon"
+    src="https://www.google.com/s2/favicons?domain=${hostname}&sz=32">
+
+    <span class="link-name">${name}</span>
+
+    <button class="link-del"
+    onclick="deleteLink(event,this)">✕</button>
+  `;
+
+  return link;
+}
+
+function addWebsite(){
+
+  const name = document.getElementById('siteName').value.trim();
+  const url  = document.getElementById('siteUrl').value.trim();
+
+  if(!name || !url){
+    alert('اكتب البيانات كاملة');
+    return;
+  }
+
+  let card = document.getElementById('custom-links');
+
+  if(!card){
+
+    card = document.createElement('div');
+
+    card.className = 'card';
+    card.id = 'custom-links';
+
+    card.innerHTML = `
+      <h2>⭐ مواقعك</h2>
+      <div class="links"></div>
+    `;
+
+    document.getElementById('grid').appendChild(card);
+  }
+
+  const container = card.querySelector('.links');
+
+  const link = createLink(name,url);
+
+  link.classList.add('link-new');
+
+  container.appendChild(link);
+
+  saveLinks();
+
+  document.getElementById('siteName').value = '';
+  document.getElementById('siteUrl').value = '';
+
+  modal.style.display = 'none';
+}
+
+function deleteLink(event,btn){
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const link = btn.closest('.link-item');
+
+  link.style.opacity = '0';
+  link.style.transform = 'scale(0.7)';
+
+  setTimeout(() => {
+
+    link.remove();
+
+    saveLinks();
+
+  },250);
+}
+
+function saveLinks(){
+
+  const card = document.getElementById('custom-links');
+
+  if(!card){
+    localStorage.removeItem('marwanLinks');
+    return;
+  }
+
+  const links = [];
+
+  card.querySelectorAll('.link-item').forEach(link => {
+
+    links.push({
+      name: link.querySelector('.link-name').textContent,
+      url: link.href
     });
 
-    const modal = document.getElementById('modal');
+  });
 
-    document.getElementById('openModal').onclick = () => {
-      modal.style.display = 'flex';
-    }
+  localStorage.setItem(
+    'marwanLinks',
+    JSON.stringify(links)
+  );
+}
 
-    modal.onclick = (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-      }
-    }
+function loadLinks(){
 
-    function getFavicon(url) {
-      try {
-        const domain = new URL(url).hostname;
-        return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-      } catch {
-        return '';
-      }
-    }
+  const saved =
+    JSON.parse(localStorage.getItem('marwanLinks'));
 
-    function addWebsite() {
-      const name = document.getElementById('siteName').value;
-      const url = document.getElementById('siteUrl').value;
+  if(!saved || !saved.length) return;
 
-      if (!name || !url) {
-        alert('اكتب البيانات كاملة');
-        return;
-      }
+  const card = document.createElement('div');
 
-      const customCardId = 'custom-links';
-      let customCard = document.getElementById(customCardId);
+  card.className = 'card';
+  card.id = 'custom-links';
 
-      if (!customCard) {
-        customCard = document.createElement('div');
-        customCard.className = 'card';
-        customCard.id = customCardId;
+  card.innerHTML = `
+    <h2>⭐ مواقعك</h2>
+    <div class="links"></div>
+  `;
 
-        customCard.innerHTML = `
-          <h2>⭐ مواقعك</h2>
-          <div class="links"></div>
-        `;
+  document.getElementById('grid').appendChild(card);
 
-        document.getElementById('grid').appendChild(customCard);
-      }
+  const container = card.querySelector('.links');
 
-      const linksContainer = customCard.querySelector('.links');
+  saved.forEach(site => {
 
-      const link = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
-      const icon = getFavicon(url);
-      link.innerHTML = `<div style="display:flex;align-items:center;gap:10px;"><img src="${icon}">${name}</div> <span>💣</span>`;
+    const link = createLink(site.name,site.url);
 
-      link.addEventListener('click', () => {
-        const sound = document.getElementById('boomSound');
-        sound.currentTime = 0;
-        sound.play();
+    container.appendChild(link);
 
-        document.body.animate([
-          { transform: 'translateX(0px)' },
-          { transform: 'translateX(-8px)' },
-          { transform: 'translateX(8px)' },
-          { transform: 'translateX(0px)' }
-        ], {
-          duration: 300
-        });
-      });
+  });
 
-      link.animate([
-        { transform: 'translateY(120px)', opacity: 0 },
-        { transform: 'translateY(0px)', opacity: 1 }
-      ], {
-        duration: 600,
-        easing: 'ease-out'
-      });
+}
 
-      linksContainer.appendChild(link);
+loadLinks();
 
-      saveLinks();
-
-      document.getElementById('siteName').value = '';
-      document.getElementById('siteUrl').value = '';
-
-      modal.style.display = 'none';
-    }
-
-    function saveLinks() {
-      const customCard = document.getElementById('custom-links');
-      if (!customCard) return;
-
-      const links = [];
-
-      customCard.querySelectorAll('a').forEach(link => {
-        links.push({
-          name: link.textContent.replace('↗', '').trim(),
-          url: link.href
-        });
-      });
-
-      localStorage.setItem('marwanLinks', JSON.stringify(links));
-    }
-
-    function deleteLink(e, btn) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const link = btn.closest('a');
-      link.style.transition = '0.3s';
-      link.style.opacity = '0';
-      link.style.transform = 'scale(0.7)';
-
-      setTimeout(() => {
-        link.remove();
-        saveLinks();
-      }, 300);
-    }
-
-    function loadLinks() {
-      const saved = JSON.parse(localStorage.getItem('marwanLinks'));
-
-      if (!saved || saved.length === 0) return;
-
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.id = 'custom-links';
-
-      card.innerHTML = `
-        <h2>⭐ مواقعك</h2>
-        <div class="links"></div>
-      `;
-
-      document.getElementById('grid').appendChild(card);
-
-      const container = card.querySelector('.links');
-
-      saved.forEach(site => {
-        const link = document.createElement('a');
-        link.href = site.url;
-        link.target = '_blank';
-        const icon = getFavicon(site.url);
-        link.innerHTML = `<div style="display:flex;align-items:center;gap:10px;"><img src="${icon}">${site.name}</div> <span>💣</span>`;
-
-        link.addEventListener('click', () => {
-          const sound = document.getElementById('boomSound');
-          sound.currentTime = 0;
-          sound.play();
-
-          document.body.animate([
-            { transform: 'translateX(0px)' },
-            { transform: 'translateX(-8px)' },
-            { transform: 'translateX(8px)' },
-            { transform: 'translateX(0px)' }
-          ], {
-            duration: 300
-          });
-        });
-        container.appendChild(link);
-      });
-    }
-
-    loadLinks();
-
-  </script>
-
-  <audio id="boomSound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3"></audio>
-  <audio id="ultSound" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
-  <audio id="satchelSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-
-  <img id="razeCharacter" src="https://static.wikia.nocookie.net/valorant/images/8/8f/Raze_Artwork_Full.png" alt="Raze">
-
-  <style>
-    #razeCharacter {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 90vh;
-      opacity: 0.18;
-      z-index: -2;
-      pointer-events: none;
-      filter: drop-shadow(0 0 40px rgba(255,140,0,0.4));
-    }
-
-    .explode {
-      animation: explode 0.6s ease;
-    }
-
-    @keyframes explode {
-      0% { transform: scale(1); }
-      40% { transform: scale(1.08) rotate(-2deg); }
-      100% { transform: scale(1); }
-    }
-
-    .rise {
-      animation: rise 0.7s ease;
-    }
-
-    @keyframes rise {
-      0% {
-        transform: translateY(120px);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-  </style>
-
-  <script>
-    function playBoomEffect() {
-      document.body.classList.add('explode');
-      const sound = document.getElementById('boomSound');
-      sound.currentTime = 0;
-      sound.play();
-
-      setTimeout(() => {
-        document.body.classList.remove('explode');
-      }, 600);
-    }
-
-    function playUltEffect() {
-      const sound = document.getElementById('ultSound');
-      sound.currentTime = 0;
-      sound.play();
-
-      document.body.classList.add('explode');
-
-      setTimeout(() => {
-        document.body.classList.remove('explode');
-      }, 900);
-    }
-
-    function playSatchelEffect(card) {
-      const sound = document.getElementById('satchelSound');
-      sound.currentTime = 0;
-      sound.play();
-
-      card.classList.add('rise');
-    }
-
-    document.querySelectorAll('.links a').forEach(link => {
-      link.addEventListener('click', playBoomEffect);
-    });
-
-    document.getElementById('search').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        playUltEffect();
-      }
-    });
-
-    const originalAddWebsite = addWebsite;
-
-    addWebsite = function() {
-      originalAddWebsite();
-
-      const customCard = document.getElementById('custom-links');
-      if (!customCard) return;
-
-      const links = customCard.querySelectorAll('a');
-      const latest = links[links.length - 1];
-
-      if (latest) {
-        playSatchelEffect(latest);
-      }
-
-      latest?.addEventListener('click', playBoomEffect);
-    }
-  </script>
+</script>
 
 </body>
 </html>
