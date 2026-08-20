@@ -164,26 +164,43 @@ body::after{
   font-size:14px;
 }
 
-.add-btn{
+/* Floating Actions Container */
+.floating-actions {
   position:fixed;
   bottom:25px;
   left:25px;
-  width:68px;
-  height:68px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  z-index:900;
+}
+
+.add-btn, .action-btn{
+  width:60px;
+  height:60px;
   border-radius:50%;
   border:none;
   cursor:pointer;
-  font-size:34px;
+  font-size:22px;
   color:white;
   background:linear-gradient(135deg,#ff00ff,#00ffff);
   box-shadow:
     0 0 20px rgba(255,0,255,0.5),
     0 0 35px rgba(0,255,255,0.4);
   transition:0.3s;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-.add-btn:hover{
-  transform:scale(1.1) rotate(90deg);
+.add-btn {
+  width:68px;
+  height:68px;
+  font-size:34px;
+}
+
+.add-btn:hover, .action-btn:hover{
+  transform:scale(1.1);
 }
 
 .modal{
@@ -333,7 +350,13 @@ body::after{
 
 </div>
 
-<button class="add-btn" id="openModal">+</button>
+<!-- Floating Action Buttons -->
+<div class="floating-actions">
+  <button class="add-btn" id="openModal" title="إضافة موقع">+</button>
+  <button class="action-btn" onclick="exportData()" title="تصدير البيانات">📥</button>
+  <button class="action-btn" onclick="triggerImport()" title="استيراد البيانات">📤</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+</div>
 
 <div class="modal" id="modal">
 
@@ -510,19 +533,23 @@ function loadLinks(){
 
   if(!saved || !saved.length) return;
 
-  const card = document.createElement('div');
+  let card = document.getElementById('custom-links');
 
-  card.className = 'card';
-  card.id = 'custom-links';
+  if(!card){
+    card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'custom-links';
 
-  card.innerHTML = `
-    <h2>⭐ مواقعك</h2>
-    <div class="links"></div>
-  `;
+    card.innerHTML = `
+      <h2>⭐ مواقعك</h2>
+      <div class="links"></div>
+    `;
 
-  document.getElementById('grid').appendChild(card);
+    document.getElementById('grid').appendChild(card);
+  }
 
   const container = card.querySelector('.links');
+  container.innerHTML = '';
 
   saved.forEach(site => {
 
@@ -532,6 +559,51 @@ function loadLinks(){
 
   });
 
+}
+
+// Export Data Functions
+function exportData(){
+  const savedData = localStorage.getItem('marwanLinks');
+  if(!savedData || savedData === '[]'){
+    alert('لا توجد مواقع محفوظة لتصديرها');
+    return;
+  }
+
+  const blob = new Blob([savedData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'marwan_santos_bookmarks.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Import Data Functions
+function triggerImport(){
+  document.getElementById('importFile').click();
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const data = JSON.parse(e.target.result);
+      if(Array.isArray(data)){
+        localStorage.setItem('marwanLinks', JSON.stringify(data));
+        loadLinks();
+        alert('تم استيراد المواقع بنجاح!');
+      } else {
+        alert('ملف غير صالح');
+      }
+    } catch(err) {
+      alert('حدث خطأ أثناء قراءة الملف');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
 }
 
 loadLinks();
